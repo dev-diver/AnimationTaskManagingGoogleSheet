@@ -1,0 +1,27 @@
+{
+  "name": "animationtaskmanaginggooglesheet",
+  "version": "1.0.0",
+  "description": "Google Spreadsheet animation task managing template # License All rights reserved. Unauthorized copying, distribution, modification, or any other use of this code is strictly prohibited.",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "kyunghyunSo",
+  "license": "SEE LICENCE IN README.md",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dev-diver/AnimationTaskManagingGoogleSheet.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dev-diver/AnimationTaskManagingGoogleSheet/issues"
+  },
+  "homepage": "https://github.com/dev-diver/AnimationTaskManagingGoogleSheet#readme",
+  "devDependencies": {
+    "@types/google-apps-script": "^1.0.83",
+    "@types/jest": "^29.5.12",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2",
+    "typescript": "^5.4.5"
+  }
+}
