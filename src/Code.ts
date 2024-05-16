@@ -1,6 +1,14 @@
-function getSheetName(): string {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  return sheet.getName();
+function myTest(){
+  Logger.log(getSheetData('종합'));
 }
 
-export { getSheetName };
+function getSheetData(sheetName: string): string[][] {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName);
+  if (!sheet) {
+    throw new Error(`Sheet with name ${sheetName} not found`);
+  }
+  const range = sheet.getDataRange();
+  return range.getValues();
+}
+
+export { getSheetData };
