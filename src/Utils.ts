@@ -1,25 +1,3 @@
-function createSheetsFromSettings() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-
-  const settingsSheet = getSheetByName('설정');
-  const templateSheet = getSheetByName('파트 템플릿');
-  const partRange = getRangeByName('파트시작');
-
-  const startRow = partRange.getRow();
-  const startColumn = partRange.getColumn();
-  const values = getRowValues(settingsSheet, startRow, startColumn+1);
-  
-  values.forEach(part => {
-    if (part) {
-      const newSheetName = part.trim() + ' 파트';
-      let sheet = ss.getSheetByName(newSheetName);
-      if (!sheet) {
-        sheet = templateSheet.copyTo(ss).setName(newSheetName);
-      }
-    }
-  });
-}
-
 function getSheetByName(name: string) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = ss.getSheetByName(name);
@@ -58,4 +36,18 @@ function getColumnValues(sheet: GoogleAppsScript.Spreadsheet.Sheet, row: number,
   return values;
 }
 
-export { createSheetsFromSettings, getSheetByName, getRangeByName, getRowValues, getColumnValues };
+function getColumnRanges(sheet: GoogleAppsScript.Spreadsheet.Sheet, row: number, column: number): GoogleAppsScript.Spreadsheet.Range {
+  let cell = sheet.getRange(row, column);
+  let i = 0;
+  while (cell.getValue()) {
+    i++;
+    cell = cell.offset(1, 0);
+  }
+  if (i==0) {
+    throw new Error('시작이 빈 열입니다.');
+  }
+  const range = sheet.getRange(row, column, i, 1);
+  return range;
+}
+
+export { getSheetByName, getRangeByName, getRowValues, getColumnValues, getColumnRanges };
