@@ -1,3 +1,8 @@
+function applyPart(){
+  createSheetsFromSettings();
+  performAdditionalTasks();
+}
+
 function createSheetsFromSettings() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
 
@@ -10,6 +15,7 @@ function createSheetsFromSettings() {
   const values = getRowValues(settingsSheet, startRow, startColumn+1);
   const partSheetNames = values.map(part => part.trim() + ' 파트')
 
+  //파트 만들기
   partSheetNames.forEach(sheetName => {
     if (sheetName) {
       let sheet = ss.getSheetByName(sheetName);
@@ -19,6 +25,7 @@ function createSheetsFromSettings() {
     }
   });
 
+  // 파트에 없는 파트 시트 삭제
   ss.getSheets().forEach(sheet => {
     const sheetName = sheet.getName();
     if (sheetName.endsWith(' 파트') && !partSheetNames.includes(sheetName)) {
@@ -40,8 +47,10 @@ function performAdditionalTasks() {
       const newSheetName = part.trim() + ' 파트';
       const sheet = getSheetByName(newSheetName);
       if (sheet) {
-        createWorkerDropdown(startColumn + 1 + i);
-        createProgressDropdown(newSheetName);
+        updateWorkerDropdown(startColumn + 1 + i);
+        updateProgressDropdown(newSheetName);
+      }else{
+        throw Error('파트 시트가 존재하지 않습니다.')
       }
     }
   });
