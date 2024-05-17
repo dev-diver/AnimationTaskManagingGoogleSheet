@@ -28,8 +28,6 @@ function AssignTask(partData){
     return
   }
   const file = getWorkerSpreadSheets().find(spreadSheet => spreadSheet.getName().includes(worker))
-  const startColumn = partData.getColumn();
-  const lastColumn = partData.getLastColumn();
 
   if(file){
     console.log(file.getName(), partData.getValues())
@@ -40,25 +38,61 @@ function AssignTask(partData){
       return;
     }
     
-    const cutValue = partData.getCell(1, 2).getValue();
     const startRange = workerSpreadsheet.getRangeByName('작업자연번필드');
     const workerStartColumn = startRange.getColumn();
+
     const workerCutValues = getColumnValues(workerSheet, startRange.getRow() + 1, workerStartColumn + 1);
+    const cutValue = partData.getCell(1, 2).getValue();
     const insertPosition = findInsertPositionIn(workerCutValues, cutValue) + startRange.getRow() + 1;
 
-    const lastDataRow = getLastDataRowInRange(startRange);
-    const numRows = lastDataRow - insertPosition + 1;
-    if (numRows > 0) {
-      const rangeToMove = workerSheet.getRange(insertPosition, workerStartColumn, numRows, lastColumn - startColumn + 1);
-      rangeToMove.moveTo(workerSheet.getRange(insertPosition + 1, workerStartColumn));
+    console.log("check same")
+    if(isSameRecord(partData, workerSpreadsheet, workerSheet, insertPosition)){
+      console.log("same")
+      return;
     }
 
-    const workerDataRange = workerSheet.getRange(insertPosition, workerStartColumn, 1, lastColumn - startColumn + 1);
-
-    // 값 복사
-    const values = partData.getValues();
-    workerDataRange.setValues(values);
+    insertRecord(partData,workerSpreadsheet, workerSheet, insertPosition);
   }
+}
+
+function isSameRecord(partData, workerSpreadsheet, workerSheet, insertPosition){
+
+  const startRange = workerSpreadsheet.getRangeByName('작업자연번필드');
+  const startRowRange = getRowRange(workerSheet, startRange.getRow(), startRange.getColumn());
+  const workerStartColumn = startRange.getColumn();
+  const workerLastColumn = startRowRange.getLastColumn();
+  
+  const rangeToCheck = workerSheet.getRange(insertPosition, workerStartColumn, 1, workerLastColumn - workerStartColumn + 1);
+  const values = rangeToCheck.getValues()[0];
+  //앞의 세 값만 비교함
+  for (let i = 1; i < 4; i++) {
+    if (values[i] !== partData.getValues()[0][i]) {
+      return false;
+    }
+  }
+  return true
+}
+
+function insertRecord(partData, workerSpreadsheet,  workerSheet, insertPosition){
+
+  const startColumn = partData.getColumn();
+  const lastColumn = partData.getLastColumn();
+
+  const startRange = workerSpreadsheet.getRangeByName('작업자연번필드');
+  const workerStartColumn = startRange.getColumn();
+
+  const lastDataRow = getLastDataRowInRange(startRange);
+  const numRows = lastDataRow - insertPosition + 1;
+  if (numRows > 0) {
+    const rangeToMove = workerSheet.getRange(insertPosition, workerStartColumn, numRows, lastColumn - startColumn + 1);
+    rangeToMove.moveTo(workerSheet.getRange(insertPosition + 1, workerStartColumn));
+  }
+
+  const workerDataRange = workerSheet.getRange(insertPosition, workerStartColumn, 1, lastColumn - startColumn + 1);
+
+  // 값 복사
+  const values = partData.getValues();
+  workerDataRange.setValues(values);
 }
 
 function findInsertPositionIn(cutValues :string[], compareValue: string): number {

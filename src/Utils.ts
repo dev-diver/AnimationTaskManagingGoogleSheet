@@ -50,6 +50,20 @@ function getColumnRange(sheet: GoogleAppsScript.Spreadsheet.Sheet, row: number, 
   return range;
 }
 
+function getRowRange(sheet: GoogleAppsScript.Spreadsheet.Sheet, row: number, column: number): GoogleAppsScript.Spreadsheet.Range {
+  let cell = sheet.getRange(row, column);
+  let i = 0;
+  while (cell.getValue()) {
+    i++;
+    cell = cell.offset(0, 1);
+  }
+  if (i==0) {
+    throw new Error('시작이 빈 행입니다.');
+  }
+  const range = sheet.getRange(row, column, 1, i);
+  return range;
+}
+
 function getOrCreateFolderByName(folderName: string): GoogleAppsScript.Drive.Folder {
   const folders = DriveApp.getFoldersByName(folderName);
   if (folders.hasNext()) {
