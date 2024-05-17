@@ -39,7 +39,9 @@ function AssignTask(partData){
       console.error(`작업 시트를 찾을 수 없습니다: ${file.getName()}`);
       return;
     }
-    const workerLastRow = workerSheet.getLastRow();
+    
+    const startRange = workerSpreadsheet.getRangeByName('작업자연번필드');
+    const workerLastRow = getLastDataRowInRange(startRange);
     const workerDataRange = workerSheet.getRange(workerLastRow + 1, 1, 1, lastColumn - startColumn + 1);
     // 값 복사
     const values = partData.getValues();

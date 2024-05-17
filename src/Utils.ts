@@ -234,3 +234,22 @@ function getPartSheets(){
   })
   return result
 }
+
+function getLastDataRowInRange(range: GoogleAppsScript.Spreadsheet.Range): number {
+  const sheet = range.getSheet();
+  const startRow = range.getRow();
+  const sheetLastRow = sheet.getLastRow();
+  const startColumn = range.getColumn();
+  const numColumns = 1
+  let lastDataRow = startRow;
+
+  for (let row = startRow; row < sheetLastRow; row++) {
+    const rowData = sheet.getRange(row, startColumn, 1, numColumns).getValues()[0];
+    const isRowEmpty = rowData.every(cell => cell === '' || cell === null);
+    if (!isRowEmpty) {
+      lastDataRow = row;
+    }
+  }
+
+  return lastDataRow;
+}

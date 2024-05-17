@@ -35,6 +35,7 @@ function makeApplyRange(sheetName, applyFieldRange, cutCount){
 
 function applyDropdown(infoRange, applyRange){
   if (isSameDropdown(infoRange, applyRange)) {
+    console.log("same")
     return;
   }
   clearDropdown(applyRange)
@@ -112,10 +113,12 @@ function isSameDropdown(infoRange, applyRange) {
     .setAllowInvalid(false)
     .build();
 
-  const currentRuleStr = currentRule ? JSON.stringify(currentRule) : '';
-  const newRuleStr = JSON.stringify(newRule);
+  console.log(currentRule,newRule)
+  const currentRuleValues = currentRule.getCriteriaValues()
+  const newRuleValues = newRule.getCriteriaValues()
   
-  return currentRuleStr === newRuleStr;
+  console.log(currentRuleValues, newRuleValues)
+  return JSON.stringify(currentRuleValues) === JSON.stringify(newRuleValues);
 }
 
 function RangeIntersect_(R1, R2) {
