@@ -1,5 +1,4 @@
-import { createSheetsFromSettings } from '../src/Code'; // 실제 코드 파일 경로를 사용하세요
-
+//<reference path="../src/SetPartSheet.ts" />
 describe('createSheetsFromSettings', () => {
   let mockSpreadsheetApp: any;
   let mockSpreadsheet: any;
@@ -72,7 +71,7 @@ describe('createSheetsFromSettings', () => {
   });
 
   it('should create sheets based on settings by copying template', () => {
-    createSheetsFromSettings();
+    SetPartSheet.createSheetsFromSettings();
 
     expect(createdSheets).toEqual(['원화 파트', '배경 파트', '붓질 파트']);
   });
@@ -88,7 +87,7 @@ describe('createSheetsFromSettings', () => {
       }
     });
 
-    createSheetsFromSettings();
+    SetPartSheet.createSheetsFromSettings();
 
     expect(createdSheets).toEqual([]);
   });

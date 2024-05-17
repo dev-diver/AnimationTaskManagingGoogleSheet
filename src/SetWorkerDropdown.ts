@@ -1,10 +1,9 @@
-import { getSheetByName, getRangeByName, getColumnRanges } from './Utils';
-
+//<reference path="type/Utils.d.ts" />
 function createWorkerDropdown(partCol) {
   //드롭다운 정보 범위 선택
   const partRange = getRangeByName('파트시작');
   const partNameRow = partRange.getRow()
-  const dropdownInfoRange = getColumnRanges(getSheetByName("설정"), partNameRow+1, partCol);
+  const dropdownInfoRange = getColumnRange(getSheetByName("설정"), partNameRow+1, partCol);
   
   const partName = getSheetByName("설정").getRange(partNameRow, partCol).getValue()
   const applyFieldRange = getRangeByName("작업자필드")
@@ -18,7 +17,7 @@ function createProgressDropdown(sheetName) {
   const progressRange = getRangeByName('진행상태');
   const startRow = progressRange.getRow();
   const dataColumn = progressRange.getColumn() + 1;
-  const dropdownInfoRange = getColumnRanges(getSheetByName("설정"), startRow, dataColumn);
+  const dropdownInfoRange = getColumnRange(getSheetByName("설정"), startRow, dataColumn);
 
   const applyFieldRange = getRangeByName("진행현황필드")
   const applyRange = makeApplyRange(sheetName,applyFieldRange, getCutCount())
@@ -105,5 +104,3 @@ function getCutCount(){
 function RangeIntersect_(R1, R2) {
   return (R1.getLastRow() >= R2.getRow()) && (R2.getLastRow() >= R1.getRow()) && (R1.getLastColumn() >= R2.getColumn()) && (R2.getLastColumn() >= R1.getColumn());
 }
-
-export { createWorkerDropdown, createProgressDropdown, getCutCount };

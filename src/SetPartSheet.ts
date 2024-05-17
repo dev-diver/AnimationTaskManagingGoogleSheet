@@ -1,6 +1,5 @@
-import { getSheetByName, getRangeByName, getRowValues } from './Utils';
-import { createWorkerDropdown, createProgressDropdown } from './SetWorkerDropdown';
-
+//<reference path="type/Utils.d.ts" />
+//<reference path="type/SetWorkerDropdown.d.ts" />
 function createSheetsFromSettings() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
 
@@ -42,5 +41,3 @@ function performAdditionalTasks() {
     }
   });
 }
-
-export { createSheetsFromSettings, performAdditionalTasks};

@@ -36,7 +36,7 @@ function getColumnValues(sheet: GoogleAppsScript.Spreadsheet.Sheet, row: number,
   return values;
 }
 
-function getColumnRanges(sheet: GoogleAppsScript.Spreadsheet.Sheet, row: number, column: number): GoogleAppsScript.Spreadsheet.Range {
+function getColumnRange(sheet: GoogleAppsScript.Spreadsheet.Sheet, row: number, column: number): GoogleAppsScript.Spreadsheet.Range {
   let cell = sheet.getRange(row, column);
   let i = 0;
   while (cell.getValue()) {
@@ -49,5 +49,3 @@ function getColumnRanges(sheet: GoogleAppsScript.Spreadsheet.Sheet, row: number,
   const range = sheet.getRange(row, column, i, 1);
   return range;
 }
-
-export { getSheetByName, getRangeByName, getRowValues, getColumnValues, getColumnRanges };
