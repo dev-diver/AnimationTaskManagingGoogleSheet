@@ -47,10 +47,10 @@ function performAdditionalTasks() {
       const newSheetName = part.trim() + ' 파트';
       const sheet = getSheetByName(newSheetName);
       if (sheet) {
-
         //드롭다운 적용
         updateWorkerDropdown(startColumn + 1 + i);
         updateProgressDropdown(newSheetName);
+        initNumberingData(sheet);
         initPartData(sheet);
         initProgressData(sheet);
       }else{
@@ -58,6 +58,30 @@ function performAdditionalTasks() {
       }
     }
   });
+}
+
+function initNumberingData(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
+  const serialField = getRangeByName('연번필드');
+  const serialFieldRow = serialField.getRow()+1
+  const serialFieldColumn = serialField.getColumn();
+
+  const count = getCutCount(); // 1부터 10까지의 값을 넣을 개수
+
+  // 연번과 코드 값을 채울 범위
+  const serialRange = sheet.getRange(serialFieldRow, serialFieldColumn, count, 1);
+  const codeRange = sheet.getRange(serialFieldRow, serialFieldColumn + 1, count, 1);
+
+  // 값 배열 생성
+  const serialValues = [];
+  const codeValues = [];
+  for (let i = 1; i <= count; i++) {
+    serialValues.push([i]);
+    codeValues.push([`C${String(i).padStart(3, '0')}`]); // C001 형식으로 만들기 위해 padStart 사용
+  }
+
+  // 값 설정
+  serialRange.setValues(serialValues);
+  codeRange.setValues(codeValues);
 }
 
 function initPartData(sheet : GoogleAppsScript.Spreadsheet.Sheet){
