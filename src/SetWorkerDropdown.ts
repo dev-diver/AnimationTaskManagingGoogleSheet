@@ -1,4 +1,3 @@
-//<reference path="type/Utils.d.ts" />
 function createWorkerDropdown(partCol) {
   //드롭다운 정보 범위 선택
   const partRange = getRangeByName('파트시작');

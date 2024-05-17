@@ -2,5 +2,7 @@
   "compilerOptions": {
     "lib": ["esnext"],
     "experimentalDecorators": true,
+    "target":"ES2015",
+    "types": ["google-apps-script"],
   }
 }

@@ -1,5 +1,3 @@
-//<reference path="type/Utils.d.ts" />
-//<reference path="type/SetWorkerDropdown.d.ts" />
 function createSheetsFromSettings() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
 
