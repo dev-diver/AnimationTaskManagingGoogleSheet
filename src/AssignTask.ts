@@ -29,6 +29,10 @@ function getProjectName() {
   return settingSheet.getRange(projectNameRange.getRow(), projectNameRange.getColumn()+1).getValue();
 }
 
+function isNewSpreadSheet(spreadSheet: GoogleAppsScript.Spreadsheet.Spreadsheet): boolean {
+  return spreadSheet.getSheets().length === 1 && spreadSheet.getSheets()[0].getName() === '시트1';
+}
+
 function makeWorkerSheet() {
   const templateSheetName = '작업자 템플릿';
   const newSheetName = '작업';
@@ -43,7 +47,7 @@ function makeWorkerSheet() {
       const spreadSheetName = name.trim() + " 작업";
       const ns = getSpreadsheetByNameInFolder(folderId, spreadSheetName);
       
-      if(ns.getSheets().length === 1 && ns.getSheets()[0].getName() === '시트1') {
+      if(isNewSpreadSheet(ns)) {
         const newScriptId = createNewScriptProject(ns.getId());
         const fileName = 'Test'; // 복사할 파일 이름
         copyFileToProject(scriptId, newScriptId, fileName);
