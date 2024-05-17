@@ -199,3 +199,13 @@ function getManifestFile(projectId: string): any {
     throw new Error(`Manifest file "appsscript.json" not found in project ${projectId}`);
   }
 }
+
+function getFilesInFolder(folderId){
+  const folder = DriveApp.getFolderById(folderId);
+  const files = folder.getFiles();
+  return files;
+}
+
+function isWorkerSpreadSheet(file){
+  return file.getName().endsWith(' 작업');
+}
