@@ -40,13 +40,45 @@ function AssignTask(partData){
       return;
     }
     
+    const cutValue = partData.getCell(1, 2).getValue();
     const startRange = workerSpreadsheet.getRangeByName('작업자연번필드');
-    const workerLastRow = getLastDataRowInRange(startRange);
-    const workerDataRange = workerSheet.getRange(workerLastRow + 1, 1, 1, lastColumn - startColumn + 1);
+    const workerStartColumn = startRange.getColumn();
+    const workerCutValues = getColumnValues(workerSheet, startRange.getRow() + 1, workerStartColumn + 1);
+    const insertPosition = findInsertPositionIn(workerCutValues, cutValue) + startRange.getRow() + 1;
+
+    const lastDataRow = getLastDataRowInRange(startRange);
+    const numRows = lastDataRow - insertPosition + 1;
+    if (numRows > 0) {
+      const rangeToMove = workerSheet.getRange(insertPosition, workerStartColumn, numRows, lastColumn - startColumn + 1);
+      rangeToMove.moveTo(workerSheet.getRange(insertPosition + 1, workerStartColumn));
+    }
+
+    const workerDataRange = workerSheet.getRange(insertPosition, workerStartColumn, 1, lastColumn - startColumn + 1);
+
     // 값 복사
     const values = partData.getValues();
     workerDataRange.setValues(values);
   }
+}
+
+function findInsertPositionIn(cutValues :string[], compareValue: string): number {
+
+  console.log(cutValues)
+  let left = 0;
+  let right = cutValues.length;
+  const compareNum = parseInt(compareValue.split('C')[1])
+  while (left < right) {
+    const mid = Math.floor((left + right) / 2);
+    const midValue = cutValues[mid];
+    const midNum = parseInt(midValue.split('C')[1])
+
+    if(midNum < compareNum){
+      left = mid + 1;
+    }else{
+      right = mid;
+    }
+  }
+  return left
 }
 
 function makeWorkerSheet() {
