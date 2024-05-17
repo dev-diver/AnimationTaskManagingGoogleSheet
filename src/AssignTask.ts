@@ -7,6 +7,22 @@ function getOrCreateFolderByName(folderName: string): GoogleAppsScript.Drive.Fol
   }
 }
 
+function getSpreadsheetByNameInFolder(folderId: string, fileName: string): GoogleAppsScript.Spreadsheet.Spreadsheet {
+  const folder = DriveApp.getFolderById(folderId);
+  const files = folder.getFilesByName(fileName);
+  
+  if (files.hasNext()) {
+    const file = files.next();
+    return SpreadsheetApp.openById(file.getId());
+  } else {
+    const ns = SpreadsheetApp.create(fileName);
+    const file = DriveApp.getFileById(ns.getId());
+    folder.addFile(file);
+    DriveApp.getRootFolder().removeFile(file); // 기본 루트 폴더에서 제거
+    return ns;
+  }
+}
+
 function getProjectName() {
   const settingSheet = getSheetByName('설정');
   const projectNameRange = getRangeByName('프로젝트명');
@@ -19,31 +35,22 @@ function makeWorkerSheet() {
   const templateSheet = getSheetByName(templateSheetName);
   const projectName = getProjectName();
   const folderId = getOrCreateFolderByName(projectName).getId();
-  const folder = DriveApp.getFolderById(folderId);
   const scriptId = ScriptApp.getScriptId();
 
   let names : string[] = makeWorkerList()
   names.forEach(name => {
     if (name) {
       const spreadSheetName = name.trim() + " 작업";
-      try {
-        const ns = SpreadsheetApp.create(spreadSheetName);
-        // 생성된 스프레드시트를 특정 폴더로 이동
-        const file = DriveApp.getFileById(ns.getId());
-        folder.addFile(file);
-        DriveApp.getRootFolder().removeFile(file); // 기본 루트 폴더에서 제거
-
+      const ns = getSpreadsheetByNameInFolder(folderId, spreadSheetName);
+      
+      if(ns.getSheets().length === 1 && ns.getSheets()[0].getName() === '시트1') {
         const newScriptId = createNewScriptProject(ns.getId());
         const fileName = 'Test'; // 복사할 파일 이름
-        copyFileToProject(ScriptApp.getScriptId(), newScriptId, fileName);
-
+        copyFileToProject(scriptId, newScriptId, fileName);
         const sheet = templateSheet.copyTo(ns).setName(newSheetName);
         // 기본적으로 생성된 빈 시트를 삭제
         const defaultSheet = ns.getSheets()[0];
         ns.deleteSheet(defaultSheet);
-      } catch (e) {
-        Logger.log(e);
-        Logger.log(`Spreadsheet with name "${spreadSheetName}" already exists or an error occurred. Skipping creation.`);
       }
     }
   });
