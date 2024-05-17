@@ -8,16 +8,23 @@ function createSheetsFromSettings() {
   const startRow = partRange.getRow();
   const startColumn = partRange.getColumn();
   const values = getRowValues(settingsSheet, startRow, startColumn+1);
-  
-  values.forEach(part => {
-    if (part) {
-      const newSheetName = part.trim() + ' 파트';
-      let sheet = ss.getSheetByName(newSheetName);
+  const partSheetNames = values.map(part => part.trim() + ' 파트')
+
+  partSheetNames.forEach(sheetName => {
+    if (sheetName) {
+      let sheet = ss.getSheetByName(sheetName);
       if (!sheet) {
-        sheet = templateSheet.copyTo(ss).setName(newSheetName);
+        sheet = templateSheet.copyTo(ss).setName(sheetName);
       }
     }
   });
+
+  ss.getSheets().forEach(sheet => {
+    const sheetName = sheet.getName();
+    if (sheetName.endsWith(' 파트') && !partSheetNames.includes(sheetName)) {
+      ss.deleteSheet(sheet);
+    }
+  })
 }
 
 function performAdditionalTasks() {
