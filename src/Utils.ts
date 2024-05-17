@@ -59,7 +59,7 @@ function getOrCreateFolderByName(folderName: string): GoogleAppsScript.Drive.Fol
   }
 }
 
-function getSpreadsheetByNameInFolder(folderId: string, fileName: string): GoogleAppsScript.Spreadsheet.Spreadsheet {
+function getOrCreateSpreadsheetByNameInFolder(folderId: string, fileName: string): GoogleAppsScript.Spreadsheet.Spreadsheet {
   const folder = DriveApp.getFolderById(folderId);
   const files = folder.getFilesByName(fileName);
   
@@ -208,4 +208,29 @@ function getFilesInFolder(folderId){
 
 function isWorkerSpreadSheet(file){
   return file.getName().endsWith(' 작업');
+}
+
+function getWorkerSpreadSheets(){
+  const folderId = getOrCreateFolderByName(getProjectName()).getId();
+  const files = getFilesInFolder(folderId);
+  const result = []
+  while(files.hasNext()){
+    const file = files.next();
+    if(isWorkerSpreadSheet(file)){
+      result.push(file)
+    }
+  }
+  return result
+}
+
+function getPartSheets(){
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const result = []
+  ss.getSheets().forEach(sheet => {
+    const sheetName = sheet.getName();
+    if (sheetName.endsWith(' 파트')) {
+      result.push(sheet)
+    }
+  })
+  return result
 }
