@@ -11,7 +11,7 @@ function AssignPartTask(sheet){
   let startRow = templatePartData.getRow();
   console.log("StartRow", startRow)
   const startColumn = templatePartData.getColumn();
-  const lastColumn = sheet.getLastColumn();
+  const lastColumn = templatePartData.getLastColumn();
 
   let partDataRange = sheet.getRange(startRow, startColumn, 1, lastColumn - startColumn + 1);
 
