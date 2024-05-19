@@ -20,7 +20,7 @@ function SyncWorkerToPart() : void {
 
 }
 
-function getSyncData(startRange : Range) : any[]{
+function getSyncData(startRange : Range) : any[][]{
   const dataStartRow = startRange.getRow()
   const dataStartColumn = startRange.getColumn()
   const syncData = startRange.getSheet().getRange(dataStartRow, dataStartColumn, getCutCount(), startRange.getLastColumn()-dataStartColumn+1)
