@@ -9,7 +9,6 @@ function AssignAllPartTask() {
 function AssignPartTask(sheet){
   const templatePartData = getRangeByName('파트데이터시작');
   let startRow = templatePartData.getRow();
-  console.log("StartRow", startRow)
   const startColumn = templatePartData.getColumn();
   const lastColumn = templatePartData.getLastColumn();
 
@@ -37,19 +36,21 @@ function AssignTask(partData){
       console.error(`작업 시트를 찾을 수 없습니다: ${file.getName()}`);
       return;
     }
-    
-    const startRange = workerSpreadsheet.getRangeByName('작업자연번필드');
-    const workerStartColumn = startRange.getColumn();
 
-    const workerCutValues = getColumnValues(workerSheet, startRange.getRow() + 1, workerStartColumn + 1);
-    const cutValue = partData.getCell(1, 2).getValue();
-    const insertPosition = findInsertPositionIn(workerCutValues, cutValue) + startRange.getRow() + 1;
-
-    console.log("check same")
-    if(isSameRecord(partData, workerSpreadsheet, workerSheet, insertPosition)){
-      console.log("same")
+    console.log("find same record")
+    if(isThereSameRecord(partData, workerSpreadsheet, workerSheet)){
+      console.log("같은 레코드가 있습니다.")
       return;
     }
+    console.log("no same record")
+    
+    const startRange = workerSpreadsheet.getRangeByName('작업자연번필드');
+    const dataStartRow = startRange.getRow() + 1;
+    const workerStartColumn = startRange.getColumn();
+
+    const workerCutValues = getColumnValues(workerSheet, dataStartRow, workerStartColumn + 1);
+    const cutValue = partData.getCell(1, 2).getValue();
+    const insertPosition = dataStartRow + findInsertPositionIn(workerCutValues, cutValue);
 
     insertRecord(partData,workerSpreadsheet, workerSheet, insertPosition);
   }
@@ -95,9 +96,27 @@ function insertRecord(partData, workerSpreadsheet,  workerSheet, insertPosition)
   workerDataRange.setValues(values);
 }
 
+function isThereSameRecord(partData, workerSpreadsheet, workerSheet){
+  const startRange = workerSpreadsheet.getRangeByName('작업자연번필드');
+  const dataStartRow = startRange.getRow() + 1;
+  const workerCutValueColumn = startRange.getColumn()+1;
+  
+  const workerCutValues = getColumnValues(workerSheet, dataStartRow, workerCutValueColumn);
+  const cutValue = partData.getCell(1, 2).getValue();
+  let comparePosition = dataStartRow + findInsertPositionIn(workerCutValues, cutValue) - 1;
+  while(workerSheet.getRange(comparePosition, workerCutValueColumn).getValue()==cutValue){
+    console.log("comparePosition", comparePosition, workerSheet.getRange(comparePosition, workerCutValueColumn).getValue())
+    if(isSameRecord(partData, workerSpreadsheet, workerSheet, comparePosition)){
+      return true
+    }
+    comparePosition -= 1
+  }
+  return false
+  
+}
+
 function findInsertPositionIn(cutValues :string[], compareValue: string): number {
 
-  console.log(cutValues)
   let left = 0;
   let right = cutValues.length;
   const compareNum = parseInt(compareValue.split('C')[1])
@@ -106,7 +125,7 @@ function findInsertPositionIn(cutValues :string[], compareValue: string): number
     const midValue = cutValues[mid];
     const midNum = parseInt(midValue.split('C')[1])
 
-    if(midNum < compareNum){
+    if(midNum <= compareNum){
       left = mid + 1;
     }else{
       right = mid;
