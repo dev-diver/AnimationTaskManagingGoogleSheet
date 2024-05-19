@@ -13,9 +13,11 @@ function makeWorkerSheet() : void {
       const spreadSheet = getOrCreateSpreadsheetByNameInFolder(folderId, spreadSheetName);
       
       if(isNewSpreadSheet(spreadSheet)) {
-        // const newScriptId = createNewScriptProject(spreadSheet.getId());
-        // const fileName = 'Test'; // 복사할 파일 이름
-        // copyFileToProject(scriptId, newScriptId, fileName);
+        
+        const newScriptId = createNewScriptProject(spreadSheet.getId());
+        const fileName = 'WorkerSheetFunc'; // 복사할 파일 이름
+        copyLibrarySettingToProject(scriptId, newScriptId, fileName);
+
         templateSheet.copyTo(spreadSheet).setName(newSheetName);
         // 기본적으로 생성된 빈 시트를 삭제
         const defaultSheet = spreadSheet.getSheets()[0];

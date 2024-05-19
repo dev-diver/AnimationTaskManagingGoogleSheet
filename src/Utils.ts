@@ -156,7 +156,7 @@ function createNewScriptProject(spreadsheetId: string): string {
   return data.scriptId;
 }
 
-function copyProjectScript(sourceScriptId: string, targetSpreadsheetId: string) {
+function copyProjectScript(sourceScriptId: string, targetScriptId: string) {
   const url = `https://script.googleapis.com/v1/projects/${sourceScriptId}/content`;
   const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
     method: 'get',
@@ -168,7 +168,7 @@ function copyProjectScript(sourceScriptId: string, targetSpreadsheetId: string) 
   const response = UrlFetchApp.fetch(url, options);
   const content = JSON.parse(response.getContentText());
 
-  const targetUrl = `https://script.googleapis.com/v1/projects/${targetSpreadsheetId}/content`;
+  const targetUrl = `https://script.googleapis.com/v1/projects/${targetScriptId}/content`;
   const targetOptions: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
     method: 'put',
     contentType: 'application/json',
@@ -182,12 +182,22 @@ function copyProjectScript(sourceScriptId: string, targetSpreadsheetId: string) 
   Logger.log(targetResponse.getContentText());
 }
 
-function copyFileToProject(sourceScriptId: string, targetScriptId: string, fileName: string) {
+function copyLibrarySettingToProject(sourceScriptId: string, targetScriptId: string, fileName: string) {
+  const sourceContent = getProjectContent(sourceScriptId);
+  
+  const fileContent = sourceContent.files.find((file: any) => file.name === fileName);
+  if (!fileContent) {
+    throw new Error(`File with name "${fileName}" not found in source project ${sourceScriptId}`);
+  }
 
-  const fileContent = getFileContent(sourceScriptId, fileName);
-  const manifestFile = getManifestFile(sourceScriptId);
+  // source 프로젝트에서 매니페스트 파일 복사
+  let manifestFile = sourceContent.files.find((file: any) => file.name === 'appsscript');
+  if (!manifestFile) {
+    throw new Error(`Manifest file "appsscript.json" not found in source project ${sourceScriptId}`);
+  }
 
-  const targetUrl = `https://script.googleapis.com/v1/projects/${targetScriptId}/content`;
+  manifestFile.source = addLibraryToManifest(JSON.parse(manifestFile.source), sourceScriptId);
+
   const targetPayload = {
     files: [
       fileContent,
@@ -195,6 +205,7 @@ function copyFileToProject(sourceScriptId: string, targetScriptId: string, fileN
     ]
   };
   
+  const targetUrl = `https://script.googleapis.com/v1/projects/${targetScriptId}/content`;
   const targetOptions: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
     method: 'put',
     contentType: 'application/json',
@@ -207,6 +218,43 @@ function copyFileToProject(sourceScriptId: string, targetScriptId: string, fileN
 
   const targetResponse = UrlFetchApp.fetch(targetUrl, targetOptions);
   Logger.log(targetResponse.getContentText());
+}
+
+function getProjectContent(projectId: string): any {
+  const url = `https://script.googleapis.com/v1/projects/${projectId}/content`;
+  const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
+    method: 'get',
+    headers: {
+      Authorization: `Bearer ${ScriptApp.getOAuthToken()}`
+    },
+    muteHttpExceptions: true
+  };
+
+  const response = UrlFetchApp.fetch(url, options);
+  if (response.getResponseCode() !== 200) {
+    throw new Error(`Failed to fetch project content: ${response.getContentText()}`);
+  }
+
+  const content = JSON.parse(response.getContentText());
+  return { files: content.files, url };
+}
+
+function addLibraryToManifest(manifestContent: any, libraryScriptId: string): string {
+  if (!manifestContent.dependencies) {
+    manifestContent.dependencies = {};
+  }
+  if (!manifestContent.dependencies.libraries) {
+    manifestContent.dependencies.libraries = [];
+  }
+
+  manifestContent.dependencies.libraries.push({
+    userSymbol: 'AnimationManaging',
+    libraryId: libraryScriptId,
+    version: '1', // 라이브러리 버전 설정
+    developmentMode: true // 개발 모드 설정
+  });
+
+  return JSON.stringify(manifestContent, null, 2);
 }
 
 function getFileContent(projectId: string, fileName: string): any {
@@ -248,7 +296,6 @@ function getManifestFile(projectId: string): any {
     throw new Error(`Manifest file "appsscript.json" not found in project ${projectId}`);
   }
 }
-
 
 function getPartSheets(){
   const ss = SpreadsheetApp.getActiveSpreadsheet();
