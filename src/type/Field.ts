@@ -1,4 +1,4 @@
-declare enum Field {
+enum Field {
   NUMBER = 0,
   CUT_NUMBER,
   WORKER,
