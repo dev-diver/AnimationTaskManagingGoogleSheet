@@ -1,4 +1,4 @@
-function isSameRecord(partData : Range, workerSpreadsheet : Spreadsheet, workerSheet : Sheet, insertPosition : number) : boolean {
+function isSameRecord(record : any[], workerSpreadsheet : Spreadsheet, workerSheet : Sheet, insertPosition : number) : boolean {
 
   const startRange = workerSpreadsheet.getRangeByName('작업자연번필드');
   const startRowRange = getRowRange(workerSheet, startRange.getRow(), startRange.getColumn());
@@ -9,29 +9,29 @@ function isSameRecord(partData : Range, workerSpreadsheet : Spreadsheet, workerS
   const values = rangeToCheck.getValues()[0];
   //앞의 세 값만 비교함
   for (let i = 1; i < 4; i++) {
-    if (values[i] !== partData.getValues()[0][i]) {
+    if (values[i] !== record[i]) {
       return false;
     }
   }
   return true
 }
 
-function isThereSameRecord(partData : Range, workerSpreadsheet : Spreadsheet, workerSheet :Sheet) : boolean {
+function findSameRecordRow(record : any[], workerSpreadsheet : Spreadsheet, workerSheet :Sheet) : number {
   const startRange = workerSpreadsheet.getRangeByName('작업자연번필드');
   const dataStartRow = startRange.getRow() + 1;
   const workerCutValueColumn = startRange.getColumn()+1;
   
   const workerCutValues = getColumnValues(workerSheet, dataStartRow, workerCutValueColumn);
-  const cutValue = partData.getCell(1, 2).getValue();
-  let comparePosition = dataStartRow + findInsertPositionIn(workerCutValues, cutValue) - 1;
-  while(workerSheet.getRange(comparePosition, workerCutValueColumn).getValue()==cutValue){
-    console.log("comparePosition", comparePosition, workerSheet.getRange(comparePosition, workerCutValueColumn).getValue())
-    if(isSameRecord(partData, workerSpreadsheet, workerSheet, comparePosition)){
-      return true
+  const cutValue = record[Field.CUT_NUMBER]
+  let compareRow = dataStartRow + findInsertPositionIn(workerCutValues, cutValue) - 1;
+  while(workerSheet.getRange(compareRow, workerCutValueColumn).getValue()==cutValue){
+    console.log("comparePosition", compareRow, workerSheet.getRange(compareRow, workerCutValueColumn).getValue())
+    if(isSameRecord(record, workerSpreadsheet, workerSheet, compareRow)){
+      return compareRow
     }
-    comparePosition -= 1
+    compareRow -= 1
   }
-  return false
+  return -1
 }
 
 function findInsertPositionIn(cutValues :string[], compareValue: string) : number {
@@ -53,24 +53,30 @@ function findInsertPositionIn(cutValues :string[], compareValue: string) : numbe
   return left
 }
 
-function insertRecord(partData : Range, workerSpreadsheet : Spreadsheet,  workerSheet : Sheet, insertPosition : number) : void {
+function overwriteRecord(record: any[], workerSpreadsheet: Spreadsheet, workerSheet: Sheet, insertPosition: number): void {
+  const startRange = workerSpreadsheet.getRangeByName('작업자연번필드');
+  const workerStartColumn = startRange.getColumn();
+  const workerDataRange = workerSheet.getRange(insertPosition, workerStartColumn, 1, record.length);
+  // 값 복사
+  workerDataRange.setValues([record]);
 
-  const startColumn = partData.getColumn();
-  const lastColumn = partData.getLastColumn();
+}
 
+function insertRecord(record: any[], workerSpreadsheet: Spreadsheet, workerSheet: Sheet, insertPosition: number): void {
+
+  // partData에서 필요한 값들을 직접 사용하지 않고, record와 관련된 정보를 직접 사용
   const startRange = workerSpreadsheet.getRangeByName('작업자연번필드');
   const workerStartColumn = startRange.getColumn();
 
   const lastDataRow = getLastDataRowInRange(startRange);
   const numRows = lastDataRow - insertPosition + 1;
+
   if (numRows > 0) {
-    const rangeToMove = workerSheet.getRange(insertPosition, workerStartColumn, numRows, lastColumn - startColumn + 1);
+    const rangeToMove = workerSheet.getRange(insertPosition, workerStartColumn, numRows, record.length);
     rangeToMove.moveTo(workerSheet.getRange(insertPosition + 1, workerStartColumn));
   }
 
-  const workerDataRange = workerSheet.getRange(insertPosition, workerStartColumn, 1, lastColumn - startColumn + 1);
-
+  const workerDataRange = workerSheet.getRange(insertPosition, workerStartColumn, 1, record.length);
   // 값 복사
-  const values = partData.getValues();
-  workerDataRange.setValues(values);
+  workerDataRange.setValues([record]);
 }

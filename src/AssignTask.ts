@@ -13,16 +13,17 @@ function AssignPartTask(sheet : Sheet) : void {
   const lastColumn = templatePartData.getLastColumn();
 
   let partDataRange = sheet.getRange(startRow, startColumn, 1, lastColumn - startColumn + 1);
-
-  while (partDataRange.getCell(1, 1).getValue()) {
-    AssignTask(partDataRange);
+  let record = partDataRange.getValues()[0];
+  while (record[0]) {
+    AssignTask(record);
     startRow += 1;
     partDataRange = sheet.getRange(startRow, startColumn, 1, lastColumn - startColumn + 1);
+    record = partDataRange.getValues()[0];
   }
 }
 
-function AssignTask(partData : Range) : void {
-  const worker = partData.getCell(1, 3).getValue();
+function AssignTask(record : any[], overwrite : boolean = false) : void {
+  const worker = record[Field.WORKER]
   if(!worker){
     return
   }
@@ -36,8 +37,12 @@ function AssignTask(partData : Range) : void {
       return;
     }
 
-    if(isThereSameRecord(partData, workerSpreadsheet, workerSheet)){
+    const sameRecordRow = findSameRecordRow(record, workerSpreadsheet, workerSheet)
+    if(sameRecordRow!=-1){
       console.log("같은 레코드가 있습니다.")
+      if(overwrite){
+        overwriteRecord(record, workerSpreadsheet, workerSheet, sameRecordRow)
+      }
       return;
     }
     
@@ -46,9 +51,9 @@ function AssignTask(partData : Range) : void {
     const workerStartColumn = startRange.getColumn();
 
     const workerCutValues = getColumnValues(workerSheet, dataStartRow, workerStartColumn + 1);
-    const cutValue = partData.getCell(1, 2).getValue();
+    const cutValue = record[Field.CUT_NUMBER]
     const insertPosition = dataStartRow + findInsertPositionIn(workerCutValues, cutValue);
 
-    insertRecord(partData,workerSpreadsheet, workerSheet, insertPosition);
+    insertRecord(record, workerSpreadsheet, workerSheet, insertPosition);
   }
 }

@@ -1,0 +1,13 @@
+declare enum Field {
+  NUMBER = 0,
+  CUT_NUMBER,
+  WORKER,
+  PART,
+  START_DATE,
+  END_DATE,
+  TERM,
+  REPORT_COUNT,
+  REPORT_DATE,
+  DUE_DATE,
+  PROGRESS_STATE,
+}
