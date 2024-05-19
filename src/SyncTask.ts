@@ -1,6 +1,6 @@
 
 function SyncPartDataToWorker() : void {
-  const activeSheet = SpreadsheetApp.getActiveSheet()
+  const activeSheet = getSpreadsheet();
   const startRange = getRangeByName(activeSheet.getName()+'!파트데이터시작');
   const SyncData = getSyncData(startRange)
   SyncData.forEach(data=>{
@@ -9,9 +9,10 @@ function SyncPartDataToWorker() : void {
 }
 
 function SyncWorkerToPart() : void {
-  const activeSheet = SpreadsheetApp.getActiveSheet()
-  const startRange = getRangeByName(activeSheet.getName()+'!작업자데이터시작');
-  console.log(getSyncData(startRange))
+  const ss = SpreadsheetApp.getActiveSpreadsheet()
+  const activeSheet = ss.getActiveSheet()
+  const startRange = ss.getRangeByName(activeSheet.getName()+'!작업자데이터시작');
+  const syncData = getSyncData(startRange)
 }
 
 function getSyncData(startRange : Range) : any[]{

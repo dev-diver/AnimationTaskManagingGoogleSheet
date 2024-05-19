@@ -1,10 +1,11 @@
 function applyPart() : void {
+  setActiveSpreadsheetId();
   createSheetsFromSettings();
   performAdditionalTasks();
 }
 
 function createSheetsFromSettings() : void {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ss = getSpreadsheet();
 
   const settingsSheet = getSheetByName('설정');
   const templateSheet = getSheetByName('파트 템플릿');

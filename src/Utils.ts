@@ -1,5 +1,5 @@
 function getSheetByName(name: string) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ss = getSpreadsheet();
   const sheet = ss.getSheetByName(name);
   if (!sheet) {
     throw new Error(`${name} 시트를 찾을 수 없습니다.`);
@@ -8,7 +8,7 @@ function getSheetByName(name: string) {
 }
 
 function getRangeByName(name: string) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ss = getSpreadsheet();
   const range = ss.getRangeByName(name);
   if (!range) {
     throw new Error(`${name} 이름 범위를 찾을 수 없습니다.`);
@@ -248,9 +248,9 @@ function addLibraryToManifest(manifestContent: any, libraryScriptId: string): st
   }
 
   manifestContent.dependencies.libraries.push({
-    userSymbol: 'AnimationManaging',
+    userSymbol: LIBRARY_NAME,
     libraryId: libraryScriptId,
-    version: '1', // 라이브러리 버전 설정
+    version: LIBRARY_VERSION, // 라이브러리 버전 설정
     developmentMode: true // 개발 모드 설정
   });
 
@@ -298,7 +298,7 @@ function getManifestFile(projectId: string): any {
 }
 
 function getPartSheets(){
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ss = getSpreadsheet();
   const result = []
   ss.getSheets().forEach(sheet => {
     const sheetName = sheet.getName();
@@ -324,6 +324,21 @@ function getWorkerSpreadSheets(){
 
 function isWorkerSpreadSheet(file){
   return file.getName().endsWith(' 작업');
+}
+
+function setActiveSpreadsheetId() {
+  const spreadsheetId = SpreadsheetApp.getActiveSpreadsheet().getId();
+  const scriptProperties = PropertiesService.getScriptProperties();
+  scriptProperties.setProperty('SPREADSHEET_ID', spreadsheetId);
+}
+
+function getSpreadsheet() {
+  const scriptProperties = PropertiesService.getScriptProperties();
+  const spreadsheetId = scriptProperties.getProperty('SPREADSHEET_ID');
+  if (!spreadsheetId) {
+    throw new Error('Spreadsheet ID not set in script properties.');
+  }
+  return SpreadsheetApp.openById(spreadsheetId);
 }
 
 
