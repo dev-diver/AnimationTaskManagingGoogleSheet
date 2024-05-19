@@ -1,4 +1,4 @@
-function makeWorkerSheet() {
+function makeWorkerSheet() : void {
   const templateSheetName = '작업자 템플릿';
   const newSheetName = '작업';
   const templateSheet = getSheetByName(templateSheetName);

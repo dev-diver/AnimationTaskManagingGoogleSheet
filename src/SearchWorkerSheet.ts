@@ -1,4 +1,4 @@
-function isSameRecord(partData, workerSpreadsheet, workerSheet, insertPosition){
+function isSameRecord(partData : Range, workerSpreadsheet : Spreadsheet, workerSheet : Sheet, insertPosition : number) : boolean {
 
   const startRange = workerSpreadsheet.getRangeByName('작업자연번필드');
   const startRowRange = getRowRange(workerSheet, startRange.getRow(), startRange.getColumn());
@@ -16,7 +16,7 @@ function isSameRecord(partData, workerSpreadsheet, workerSheet, insertPosition){
   return true
 }
 
-function isThereSameRecord(partData, workerSpreadsheet, workerSheet){
+function isThereSameRecord(partData : Range, workerSpreadsheet : Spreadsheet, workerSheet :Sheet) : boolean {
   const startRange = workerSpreadsheet.getRangeByName('작업자연번필드');
   const dataStartRow = startRange.getRow() + 1;
   const workerCutValueColumn = startRange.getColumn()+1;
@@ -32,10 +32,9 @@ function isThereSameRecord(partData, workerSpreadsheet, workerSheet){
     comparePosition -= 1
   }
   return false
-  
 }
 
-function findInsertPositionIn(cutValues :string[], compareValue: string): number {
+function findInsertPositionIn(cutValues :string[], compareValue: string) : number {
 
   let left = 0;
   let right = cutValues.length;
@@ -54,7 +53,7 @@ function findInsertPositionIn(cutValues :string[], compareValue: string): number
   return left
 }
 
-function insertRecord(partData, workerSpreadsheet,  workerSheet, insertPosition){
+function insertRecord(partData : Range, workerSpreadsheet : Spreadsheet,  workerSheet : Sheet, insertPosition : number) : void {
 
   const startColumn = partData.getColumn();
   const lastColumn = partData.getLastColumn();

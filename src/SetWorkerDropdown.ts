@@ -1,4 +1,4 @@
-function updateWorkerDropdown(partCol) {
+function updateWorkerDropdown(partCol : number) : void{
 
   //드롭다운 정보 범위 선택
   const partRange = getRangeByName('파트시작');
@@ -13,7 +13,7 @@ function updateWorkerDropdown(partCol) {
   applyDropdown(dropdownInfoRange,applyRange)
 }
 
-function updateProgressDropdown(sheetName) {
+function updateProgressDropdown(sheetName : string) : void {
 
   const progressRange = getRangeByName('진행상태');
   const startRow = progressRange.getRow();
@@ -26,14 +26,14 @@ function updateProgressDropdown(sheetName) {
   applyDropdown(dropdownInfoRange,applyRange)
 }
 
-function makeApplyRange(sheetName, applyFieldRange, cutCount){
+function makeApplyRange(sheetName : string, applyFieldRange : Range, cutCount : number) : Range {
   const dataRow = applyFieldRange.getRow() + 1;
   const dataColumn = applyFieldRange.getColumn();
   const applyRange = getSheetByName(sheetName).getRange(dataRow, dataColumn, cutCount);
   return applyRange
 }
 
-function applyDropdown(infoRange, applyRange){
+function applyDropdown(infoRange : Range, applyRange : Range) : void {
   if (isSameDropdown(infoRange, applyRange)) {
     console.log("same")
     return;
@@ -43,7 +43,7 @@ function applyDropdown(infoRange, applyRange){
   applyDropdownColor(infoRange,applyRange)
 }
 
-function applyDropdownText(infoRange, applyRange){
+function applyDropdownText(infoRange : Range, applyRange : Range) : void {
   // 드롭다운 목록을 만들기 위한 데이터 유효성 객체 생성
   const rule = SpreadsheetApp.newDataValidation()
     .requireValueInList(infoRange.getValues().flat()) // 값 범위를 배열로 변환하여 지정
@@ -52,21 +52,21 @@ function applyDropdownText(infoRange, applyRange){
   applyRange.setDataValidation(rule);
 }
 
-function applyDropdownColor(infoRange,applyRange){
+function applyDropdownColor(infoRange : Range,applyRange : Range) : void {
   const sheet = applyRange.getSheet()
   const colors = infoRange.getBackgrounds().flat()
   const values = infoRange.getValues().flat()
   const rules = sheet.getConditionalFormatRules(); //기존룰
 
   for(let i=0;i<values.length;i++){
-    let rule = makeConditionalFormattingRule_(values[i],colors[i],applyRange) //필터 없을 때 규칙
+    let rule = makeConditionalFormattingRule(values[i],colors[i],applyRange) //필터 없을 때 규칙
     rules.push(rule)
   }
   sheet.setConditionalFormatRules(rules);
 }
 
 //조건부 서식 규칙 생성
-function makeConditionalFormattingRule_(text,color,rng) {
+function makeConditionalFormattingRule(text : string ,color: string, rng : Range) : ConditionalFormatRule{
   const rule = SpreadsheetApp.newConditionalFormatRule()
     .whenTextEqualTo(text)
     .setBackground(color)
@@ -75,12 +75,12 @@ function makeConditionalFormattingRule_(text,color,rng) {
   return rule
 }
 
-function clearDropdown(rng){
+function clearDropdown(rng : Range) : void {
   clearDropdownText(rng)
   clearDropdownColor(rng)
 }
 
-function clearDropdownColor(rng){
+function clearDropdownColor(rng : Range) : void {
   const sheet = rng.getSheet()
   let rules = sheet.getConditionalFormatRules();
   rules = rules.filter(rule=>{ //모든 룰 중에서
@@ -96,17 +96,11 @@ function clearDropdownColor(rng){
   sheet.setConditionalFormatRules(rules);
 }
 
-function clearDropdownText(rng) {
-  // 드롭다운 목록을 제거하기 위해 데이터 유효성 규칙을 제거합니다.
+function clearDropdownText(rng : Range) : void {
   rng.setDataValidation(null);
 }
 
-function getCutCount(){
-  const cutCountRange = getRangeByName("컷수")
-  return cutCountRange.offset(0,1).getValue()
-}
-
-function isSameDropdown(infoRange, applyRange) {
+function isSameDropdown(infoRange : Range, applyRange : Range) : boolean {
   const currentRule = applyRange.getDataValidation();
   const newRule = SpreadsheetApp.newDataValidation()
     .requireValueInList(infoRange.getValues().flat()) // 값 범위를 배열로 변환하여 지정
@@ -119,8 +113,4 @@ function isSameDropdown(infoRange, applyRange) {
   
   console.log(currentRuleValues, newRuleValues)
   return JSON.stringify(currentRuleValues) === JSON.stringify(newRuleValues);
-}
-
-function RangeIntersect_(R1, R2) {
-  return (R1.getLastRow() >= R2.getRow()) && (R2.getLastRow() >= R1.getRow()) && (R1.getLastColumn() >= R2.getColumn()) && (R2.getLastColumn() >= R1.getColumn());
 }

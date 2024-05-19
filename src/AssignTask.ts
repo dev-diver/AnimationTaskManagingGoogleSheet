@@ -1,4 +1,4 @@
-function AssignAllPartTask() {
+function AssignAllPartTask() : void {
   makeWorkerSheet()
   const partSheets = getPartSheets()
   partSheets.forEach(sheet=>{
@@ -6,7 +6,7 @@ function AssignAllPartTask() {
   })
 }
 
-function AssignPartTask(sheet){
+function AssignPartTask(sheet : Sheet) : void {
   const templatePartData = getRangeByName('파트데이터시작');
   let startRow = templatePartData.getRow();
   const startColumn = templatePartData.getColumn();
@@ -21,7 +21,7 @@ function AssignPartTask(sheet){
   }
 }
 
-function AssignTask(partData){
+function AssignTask(partData : Range) : void {
   const worker = partData.getCell(1, 3).getValue();
   if(!worker){
     return
@@ -29,7 +29,6 @@ function AssignTask(partData){
   const file = getWorkerSpreadSheets().find(spreadSheet => spreadSheet.getName().includes(worker))
 
   if(file){
-    console.log(file.getName(), partData.getValues())
     const workerSpreadsheet = SpreadsheetApp.openById(file.getId())
     const workerSheet = workerSpreadsheet.getSheetByName('작업');
     if (!workerSheet) {
@@ -37,12 +36,10 @@ function AssignTask(partData){
       return;
     }
 
-    console.log("find same record")
     if(isThereSameRecord(partData, workerSpreadsheet, workerSheet)){
       console.log("같은 레코드가 있습니다.")
       return;
     }
-    console.log("no same record")
     
     const startRange = workerSpreadsheet.getRangeByName('작업자연번필드');
     const dataStartRow = startRange.getRow() + 1;

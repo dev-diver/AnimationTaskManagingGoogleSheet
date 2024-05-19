@@ -84,6 +84,14 @@ function getLastDataRowInRange(range: GoogleAppsScript.Spreadsheet.Range): numbe
   return lastDataRow;
 }
 
+function RangeIntersect_(R1 : Range, R2 : Range) {
+  return (R1.getLastRow() >= R2.getRow()) && (R2.getLastRow() >= R1.getRow()) && (R1.getLastColumn() >= R2.getColumn()) && (R2.getLastColumn() >= R1.getColumn());
+}
+
+function getCutCount() : number{
+  const cutCountRange = getRangeByName("컷수")
+  return cutCountRange.offset(0,1).getValue()
+}
 
 function getProjectName() {
   const settingSheet = getSheetByName('설정');

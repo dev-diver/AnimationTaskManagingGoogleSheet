@@ -1,9 +1,9 @@
-function applyPart(){
+function applyPart() : void {
   createSheetsFromSettings();
   performAdditionalTasks();
 }
 
-function createSheetsFromSettings() {
+function createSheetsFromSettings() : void {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
 
   const settingsSheet = getSheetByName('설정');
@@ -34,7 +34,7 @@ function createSheetsFromSettings() {
   })
 }
 
-function performAdditionalTasks() {
+function performAdditionalTasks() : void {
   const settingsSheet = getSheetByName('설정');
   const partRange = getRangeByName('파트시작');
 
@@ -60,7 +60,7 @@ function performAdditionalTasks() {
   });
 }
 
-function initNumberingData(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
+function initNumberingData(sheet: Sheet): void {
   const serialField = getRangeByName('연번필드');
   const serialFieldRow = serialField.getRow()+1
   const serialFieldColumn = serialField.getColumn();
@@ -84,7 +84,7 @@ function initNumberingData(sheet: GoogleAppsScript.Spreadsheet.Sheet): void {
   codeRange.setValues(codeValues);
 }
 
-function initPartData(sheet : GoogleAppsScript.Spreadsheet.Sheet){
+function initPartData(sheet : GoogleAppsScript.Spreadsheet.Sheet) : void {
   const partField = getRangeByName('작업파트필드');
   const partFieldRow = partField.getRow();
   const partFieldColumn = partField.getColumn();
@@ -93,7 +93,7 @@ function initPartData(sheet : GoogleAppsScript.Spreadsheet.Sheet){
   partFieldRange.setValue(partName);
 }
 
-function initProgressData(sheet: GoogleAppsScript.Spreadsheet.Sheet){
+function initProgressData(sheet: GoogleAppsScript.Spreadsheet.Sheet) : void {
   const progressField = getRangeByName('진행현황필드');
   const progressFieldRow = progressField.getRow();
   const progressFieldColumn = progressField.getColumn();
