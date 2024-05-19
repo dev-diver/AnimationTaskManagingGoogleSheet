@@ -23,7 +23,8 @@ function AssignPartTask(sheet : Sheet) : void {
 }
 
 function AssignTask(record : any[], overwrite : boolean = false) : void {
-  const worker = record[Field.WORKER]
+  const worker = record[FieldOffset.WORKER]
+  const numFieldName = '작업자'+FieldName.NUMBER+'필드'
   if(!worker){
     return
   }
@@ -37,23 +38,23 @@ function AssignTask(record : any[], overwrite : boolean = false) : void {
       return;
     }
 
-    const sameRecordRow = findSameRecordRow(record, workerSpreadsheet, workerSheet)
+    const sameRecordRow = findSameRecordRow(record, workerSpreadsheet, workerSheet, numFieldName)
     if(sameRecordRow!=-1){
       console.log("같은 레코드가 있습니다.")
       if(overwrite){
-        overwriteRecord(record, workerSpreadsheet, workerSheet, sameRecordRow)
+        overwriteRecord(record, workerSpreadsheet, workerSheet, numFieldName, sameRecordRow)
       }
       return;
     }
     
-    const startRange = workerSpreadsheet.getRangeByName('작업자연번필드');
+    const startRange = workerSpreadsheet.getRangeByName(numFieldName);
     const dataStartRow = startRange.getRow() + 1;
     const workerStartColumn = startRange.getColumn();
 
     const workerCutValues = getColumnValues(workerSheet, dataStartRow, workerStartColumn + 1);
-    const cutValue = record[Field.CUT_NUMBER]
-    const insertPosition = dataStartRow + findInsertPositionIn(workerCutValues, cutValue);
+    const cutValue = record[FieldOffset.CUT_NUMBER]
+    const insertRow = dataStartRow + findInsertPositionIn(workerCutValues, cutValue);
 
-    insertRecord(record, workerSpreadsheet, workerSheet, insertPosition);
+    insertRecord(record, workerSpreadsheet, workerSheet, numFieldName, insertRow);
   }
 }

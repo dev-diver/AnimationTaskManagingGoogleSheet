@@ -51,7 +51,7 @@ function performAdditionalTasks() : void {
         //드롭다운 적용
         updateWorkerDropdown(startColumn + 1 + i);
         updateProgressDropdown(newSheetName);
-        initNumberingData(sheet);
+        initNumberingData(sheet , FieldName.NUMBER+'필드');
         initPartData(sheet);
         initProgressData(sheet);
       }else{
@@ -61,8 +61,8 @@ function performAdditionalTasks() : void {
   });
 }
 
-function initNumberingData(sheet: Sheet): void {
-  const serialField = getRangeByName('연번필드');
+function initNumberingData(sheet: Sheet, startRangeName: string): void {
+  const serialField = getRangeByName(startRangeName);
   const serialFieldRow = serialField.getRow()+1
   const serialFieldColumn = serialField.getColumn();
 
