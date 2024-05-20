@@ -44,6 +44,7 @@ function performAdditionalTasks() : void {
   const startRow = partRange.getRow();
   const startColumn = partRange.getColumn();
   const values = getRowValues(settingsSheet, startRow, startColumn + 1);
+  const spreadsheet = getSpreadsheet();
 
   values.forEach((part,i) => {
     if (part) {
@@ -56,9 +57,9 @@ function performAdditionalTasks() : void {
         
         initNumberingData(sheet , startRangeName);
         initPartData(sheet);
-        fillTemplateData(sheet)
-        fillCheckBox(sheet)
-        copyColumnFormats(sheet);
+        fillTemplateData(sheet, '파트 템플릿!파트데이터시작')
+        fillCheckBox(spreadsheet, sheet.getName()+'!파트데이터시작')
+        copyColumnFormats(spreadsheet, spreadsheet,'파트데이터시작', '파트데이터시작');
 
         //드롭다운 적용
         updateWorkerDropdown(startColumn + 1 + i);
@@ -72,17 +73,15 @@ function performAdditionalTasks() : void {
   });
 }
 
-function fillCheckBox(sheet : Sheet){
-  const dataStartRange = getRangeByName(sheet.getName()+'!파트데이터시작');
-  const cutCount = getCutCount();
-  const startRow = dataStartRange.getRow();
-
-  const checkBoxRange = dataStartRange.offset(0, dataStartRange.getNumColumns(), cutCount, 1);
+function fillCheckBox(spreadSheet : Spreadsheet, startRangeName : string){
+  const dataStartRange = spreadSheet.getRangeByName(startRangeName);
+  const rowCount = getLastDataRowInRange(dataStartRange) - dataStartRange.getRow() + 1
+  const checkBoxRange = dataStartRange.offset(0, dataStartRange.getNumColumns(), rowCount, 1);
   checkBoxRange.insertCheckboxes();
 }
 
-function fillTemplateData(sheet: Sheet): void {
-  const dataRange = getRangeByName('파트 템플릿!파트데이터시작');
+function fillTemplateData(sheet: Sheet, startRangeName: string): void {
+  const dataRange = getRangeByName(startRangeName);
   const values = dataRange.getValues()[0];
   const formulas = dataRange.getFormulas()[0];
   const startRow = dataRange.getRow();
@@ -118,12 +117,14 @@ function fillTemplateData(sheet: Sheet): void {
   targetRange.setValues(targetValues);
 }
 
-function copyColumnFormats(sheet : Sheet): void {
-  const dataStartRange = getRangeByName('파트데이터시작');
+function copyColumnFormats(sourceSpreadSheet : Spreadsheet, targetSpreadSheet : Spreadsheet, sourceStartRangeName : string, targetStartRangeName : string): void {
+  const sourceStartRange = sourceSpreadSheet.getRangeByName(sourceStartRangeName);
+  const targetStartRange = targetSpreadSheet.getRangeByName(targetStartRangeName);
+  const rowCount = getLastDataRowInRange(targetStartRange) - targetStartRange.getRow() + 1
 
-  for (let col: number = 0; col <= dataStartRange.getNumColumns(); col++) { // B열부터 K열까지 (2열부터 11열까지)
-    const sourceRange = dataStartRange.offset(0, col, 1, 1);
-    const targetRange = sheet.getRange(dataStartRange.getRow()+1, dataStartRange.getColumn()+col, getCutCount()-1, 1);
+  for (let col: number = 0; col <= targetStartRange.getNumColumns(); col++) { // B열부터 K열까지 (2열부터 11열까지)
+    const sourceRange = sourceStartRange.offset(0, col, 1, 1);
+    const targetRange = targetStartRange.offset(0, col, rowCount, 1);
     sourceRange.copyTo(targetRange, SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);
   }
 }

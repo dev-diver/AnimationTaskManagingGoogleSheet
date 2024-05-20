@@ -21,9 +21,9 @@ function updateProgressDropdown(sheetName : string) : void {
   const dropdownInfoRange = getColumnRange(getSheetByName("설정"), startRow, dataColumn);
 
   const applyFieldRange = getRangeByName("진행현황필드")
-  const applyRange = makeApplyRange(sheetName,applyFieldRange, getCutCount())
+  const applyRange = makeApplyRange(sheetName ,applyFieldRange, getCutCount())
 
-  applyDropdown(dropdownInfoRange,applyRange)
+  applyDropdown(dropdownInfoRange, applyRange)
 }
 
 function makeApplyRange(sheetName : string, applyFieldRange : Range, cutCount : number) : Range {

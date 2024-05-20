@@ -340,6 +340,3 @@ function getSpreadsheet() {
   }
   return SpreadsheetApp.openById(spreadsheetId);
 }
-
-
-

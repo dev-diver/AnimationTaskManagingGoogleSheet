@@ -3,6 +3,26 @@ function assignAllPartTask() : void {
   makeWorkerSheets()
   cleanWorkerSheets()
   assignWorkersTask()
+  
+}
+
+function applyWorkerSheetFormat(spreadsheet : Spreadsheet){
+  fillCheckBox(spreadsheet, '작업자데이터시작')
+  // copyColumnFormats(spreadsheet, spreadsheet,'작업자데이터시작', '작업자데이터시작');
+  const progressRange = getRangeByName('진행상태');
+  const startRow = progressRange.getRow();
+  const dataColumn = progressRange.getColumn() + 1;
+  const dropdownInfoRange = getColumnRange(getSheetByName("설정"), startRow, dataColumn);
+
+  const sheet = spreadsheet.getSheetByName('작업');
+  const applyFieldRange = getRangeByName("작업자진행현황필드")
+  const dataRow = applyFieldRange.getRow() + 1;
+  const rowCount = getColumnValues(sheet, dataRow, applyFieldRange.getColumn()).length
+  console.log(rowCount)
+  if(rowCount!=0){
+    const applyRange = sheet.getRange(dataRow, applyFieldRange.getColumn(), rowCount);
+    applyDropdown(dropdownInfoRange, applyRange)
+  }
 }
 
 function assignWorkersTask() : void {
@@ -10,6 +30,7 @@ function assignWorkersTask() : void {
   files.forEach(file=>{
     const spreadsheet = SpreadsheetApp.openById(file.getId());
     assignWorkerTask(spreadsheet)
+    applyWorkerSheetFormat(spreadsheet)
   })
 }
 
@@ -17,7 +38,9 @@ function assignWorkerTask(workerSpreadSheet : Spreadsheet) : void {
   const workerName = workerSpreadSheet.getName().split(' ')[0]
   const workerTaskData = getWorkerTaskData(workerName)
   const dataRange = workerSpreadSheet.getRangeByName('작업자데이터시작');
-  dataRange.offset(0,0,workerTaskData.length,dataRange.getNumColumns()).setValues(workerTaskData)
+  if(workerTaskData.length!=0){
+    dataRange.offset(0,0,workerTaskData.length,dataRange.getNumColumns()).setValues(workerTaskData)
+  }
 }
 
 function cleanWorkerSheets() : void {
