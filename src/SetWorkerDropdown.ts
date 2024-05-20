@@ -34,11 +34,15 @@ function makeApplyRange(sheetName : string, applyFieldRange : Range, cutCount : 
 }
 
 function applyDropdown(infoRange : Range, applyRange : Range) : void {
-  if (isSameDropdown(infoRange, applyRange)) {
-    console.log("same")
-    return;
-  }
-  clearDropdown(applyRange)
+  // const beforeRowCount = applyRange.getSheet().getLastRow()-applyRange.getRow()+1;
+  // const beforeColumnCount = applyRange.getNumColumns();
+  // console.log(beforeRowCount,beforeColumnCount)
+  // if (getCutCount() == beforeRowCount || isSameDropdown(infoRange, applyRange)) {
+  //   console.log("same")
+  //   return;
+  // }
+  const clearRange = applyRange
+  clearDropdown(clearRange)
   applyDropdownText(infoRange,applyRange)
   applyDropdownColor(infoRange,applyRange)
 }

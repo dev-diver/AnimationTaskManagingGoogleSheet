@@ -48,19 +48,97 @@ function performAdditionalTasks() : void {
   values.forEach((part,i) => {
     if (part) {
       const newSheetName = part.trim() + ' 파트';
+      const startRangeName = newSheetName + '!' + FieldName.NUMBER + '필드';
       const sheet = getSheetByName(newSheetName);
       if (sheet) {
+
+        clearOverCutCount(sheet, startRangeName);
+        
+        initNumberingData(sheet , startRangeName);
+        initPartData(sheet);
+        fillTemplateData(sheet)
+        fillCheckBox(sheet)
+        copyColumnFormats(sheet);
+
         //드롭다운 적용
         updateWorkerDropdown(startColumn + 1 + i);
         updateProgressDropdown(newSheetName);
-        initNumberingData(sheet , FieldName.NUMBER+'필드');
-        initPartData(sheet);
+
         initProgressData(sheet);
       }else{
         throw Error('파트 시트가 존재하지 않습니다.')
       }
     }
   });
+}
+
+function fillCheckBox(sheet : Sheet){
+  const dataStartRange = getRangeByName(sheet.getName()+'!파트데이터시작');
+  const cutCount = getCutCount();
+  const startRow = dataStartRange.getRow();
+
+  const checkBoxRange = dataStartRange.offset(0, dataStartRange.getNumColumns(), cutCount, 1);
+  checkBoxRange.insertCheckboxes();
+}
+
+function fillTemplateData(sheet: Sheet): void {
+  const dataRange = getRangeByName('파트 템플릿!파트데이터시작');
+  const values = dataRange.getValues()[0];
+  const formulas = dataRange.getFormulas()[0];
+  const startRow = dataRange.getRow();
+  const startColumn = dataRange.getColumn();
+  const valIndices = [4, 5, 7];
+  const funcIndices = [6, 9];
+
+  // getCutCount 함수가 startRow에 기반한 row 수를 반환한다고 가정
+  const targetRange = sheet.getRange(startRow, startColumn, getCutCount(), dataRange.getNumColumns());
+  const targetValues = targetRange.getValues();
+
+  targetValues.forEach((row,i) => {
+    valIndices.forEach(colIndex => {
+      console.log(values[colIndex])
+      if (!row[colIndex]) {
+        row[colIndex] = values[colIndex];
+      }
+    });
+    funcIndices.forEach(colIndex => {
+      if (!row[colIndex]) {
+        let formula = formulas[colIndex].toString(); // 수식을 문자열로 변환
+
+        // 행 번호를 조정하여 수식을 업데이트
+        formula = formula.replace(/(\d+)/g, (match) => {
+          return (parseInt(match) + i).toString();
+        });
+
+        row[colIndex] = `${formula}`; // 수식을 셀에 입력
+      }
+    });
+  });
+
+  targetRange.setValues(targetValues);
+}
+
+function copyColumnFormats(sheet : Sheet): void {
+  const dataStartRange = getRangeByName('파트데이터시작');
+
+  for (let col: number = 0; col <= dataStartRange.getNumColumns(); col++) { // B열부터 K열까지 (2열부터 11열까지)
+    const sourceRange = dataStartRange.offset(0, col, 1, 1);
+    const targetRange = sheet.getRange(dataStartRange.getRow()+1, dataStartRange.getColumn()+col, getCutCount()-1, 1);
+    sourceRange.copyTo(targetRange, SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);
+  }
+}
+
+function clearOverCutCount(sheet : Sheet, startRangeName :string) : void {
+  const dataRange = getRangeByName('파트데이터시작');
+  const startRange = getRangeByName(startRangeName);
+  const cutCount = getCutCount();
+  const surviveRow = cutCount + startRange.getRow();
+  const lastRow = sheet.getLastRow()
+  if (lastRow > surviveRow) {
+    const clearRange = sheet.getRange(surviveRow+1,dataRange.getColumn(),lastRow-surviveRow,dataRange.getNumColumns()+1)
+    clearRange.clear()
+    clearRange.clearDataValidations()
+  }
 }
 
 function initNumberingData(sheet: Sheet, startRangeName: string): void {
@@ -87,7 +165,7 @@ function initNumberingData(sheet: Sheet, startRangeName: string): void {
   codeRange.setValues(codeValues);
 }
 
-function initPartData(sheet : GoogleAppsScript.Spreadsheet.Sheet) : void {
+function initPartData(sheet : Sheet) : void {
   const partField = getRangeByName('작업파트필드');
   const partFieldRow = partField.getRow();
   const partFieldColumn = partField.getColumn();
@@ -96,7 +174,7 @@ function initPartData(sheet : GoogleAppsScript.Spreadsheet.Sheet) : void {
   partFieldRange.setValue(partName);
 }
 
-function initProgressData(sheet: GoogleAppsScript.Spreadsheet.Sheet) : void {
+function initProgressData(sheet: Sheet) : void {
   const progressField = getRangeByName('진행현황필드');
   const progressFieldRow = progressField.getRow();
   const progressFieldColumn = progressField.getColumn();
