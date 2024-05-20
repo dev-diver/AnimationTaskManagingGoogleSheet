@@ -19,6 +19,17 @@ function SyncWorkerToPart() : void {
   })
 }
 
+// function getReportDataAndChangeDate(rng : Range) : any[][]{
+//   const data = rng.getValues()
+//   const date = new Date()
+//   data.forEach(row=>{
+//     if(row[FieldOffset.REPORT_DATE] === ''){
+//     row[FieldOffset.REPORT_DATE] = date
+
+//   })
+//   return data
+// }
+
 function getSyncRange(startRange: Range) : Range {
   const dataStartRow = startRange.getRow()
   const dataStartColumn = startRange.getColumn()

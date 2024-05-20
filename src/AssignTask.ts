@@ -7,7 +7,7 @@ function assignAllPartTask() : void {
 }
 
 function applyWorkerSheetFormat(spreadsheet : Spreadsheet){
-  fillCheckBox(spreadsheet, '작업자데이터시작')
+  fillCheckBox(spreadsheet, '작업자데이터시작', FieldOffset.REPORT);
   // copyColumnFormats(spreadsheet, spreadsheet,'작업자데이터시작', '작업자데이터시작');
   const progressRange = getRangeByName('진행상태');
   const startRow = progressRange.getRow();
@@ -18,7 +18,6 @@ function applyWorkerSheetFormat(spreadsheet : Spreadsheet){
   const applyFieldRange = getRangeByName("작업자진행현황필드")
   const dataRow = applyFieldRange.getRow() + 1;
   const rowCount = getColumnValues(sheet, dataRow, applyFieldRange.getColumn()).length
-  console.log(rowCount)
   if(rowCount!=0){
     const applyRange = sheet.getRange(dataRow, applyFieldRange.getColumn(), rowCount);
     applyDropdown(dropdownInfoRange, applyRange)

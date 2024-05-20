@@ -58,7 +58,8 @@ function performAdditionalTasks() : void {
         initNumberingData(sheet , startRangeName);
         initPartData(sheet);
         fillTemplateData(sheet, '파트 템플릿!파트데이터시작')
-        fillCheckBox(spreadsheet, sheet.getName()+'!파트데이터시작')
+        fillCheckBox(spreadsheet, sheet.getName()+'!파트데이터시작', FieldOffset.REPORT);
+        fillCheckBox(spreadsheet, sheet.getName()+'!파트데이터시작', FieldOffset.REPORT+1);
         copyColumnFormats(spreadsheet, spreadsheet,'파트데이터시작', '파트데이터시작');
 
         //드롭다운 적용
@@ -73,10 +74,10 @@ function performAdditionalTasks() : void {
   });
 }
 
-function fillCheckBox(spreadSheet : Spreadsheet, startRangeName : string){
+function fillCheckBox(spreadSheet : Spreadsheet, startRangeName : string, column: number){
   const dataStartRange = spreadSheet.getRangeByName(startRangeName);
   const rowCount = getLastDataRowInRange(dataStartRange) - dataStartRange.getRow() + 1
-  const checkBoxRange = dataStartRange.offset(0, dataStartRange.getNumColumns(), rowCount, 1);
+  const checkBoxRange = dataStartRange.offset(0, column, rowCount, 1)
   checkBoxRange.insertCheckboxes();
 }
 

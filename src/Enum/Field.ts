@@ -10,6 +10,7 @@ enum FieldOffset {
   REPORT_DATE,
   DUE_DATE,
   PROGRESS_STATE,
+  REPORT
 }
 
 enum FieldName {
