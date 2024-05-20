@@ -4,7 +4,7 @@ function SyncPartDataToWorker() : void {
   const startRange = getRangeByName(activeSheet.getName()+'!파트데이터시작');
   const SyncData = getSyncData(startRange)
   SyncData.forEach(data=>{
-    AssignTask(data,true)
+    assignTask(data,true)
   })
 }
 
@@ -17,14 +17,19 @@ function SyncWorkerToPart() : void {
   syncData.forEach(data=>{
     syncAndReportWorkerTask(data)
   })
+}
 
+function getSyncRange(startRange: Range) : Range {
+  const dataStartRow = startRange.getRow()
+  const dataStartColumn = startRange.getColumn()
+  const dataEndRow = getLastDataRowInRange(startRange)
+  const syncRange = startRange.getSheet().getRange(dataStartRow, dataStartColumn, dataEndRow, startRange.getLastColumn()-dataStartColumn+1)
+  return syncRange
 }
 
 function getSyncData(startRange : Range) : any[][]{
-  const dataStartRow = startRange.getRow()
-  const dataStartColumn = startRange.getColumn()
-  const syncData = startRange.getSheet().getRange(dataStartRow, dataStartColumn, getCutCount(), startRange.getLastColumn()-dataStartColumn+1)
-  return syncData.getValues()
+  const syncRange = getSyncRange(startRange)
+  return syncRange.getValues()
 }
 
 function syncAndReportWorkerTask(record : any[]){

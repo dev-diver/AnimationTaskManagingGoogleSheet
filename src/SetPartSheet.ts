@@ -2,6 +2,8 @@ function applyPart() : void {
   setActiveSpreadsheetId();
   createSheetsFromSettings();
   performAdditionalTasks();
+  deleteNotWorkerSheets()
+  makeWorkerSheets();
 }
 
 function createSheetsFromSettings() : void {

@@ -1,4 +1,4 @@
-function makeWorkerSheet() : void {
+function makeWorkerSheets() : void {
   const templateSheetName = '작업자 템플릿';
   const newSheetName = '작업';
   const templateSheet = getSheetByName(templateSheetName);
@@ -25,6 +25,20 @@ function makeWorkerSheet() : void {
       }
     }
   });
+}
+
+function deleteNotWorkerSheets() : void { 
+  const projectName = getProjectName();
+  const folderId = getOrCreateFolderByName(projectName).getId();
+  const names = makeWorkerList()
+  const files = getFilesInFolder(folderId)
+  while(files.hasNext()){
+    const file = files.next()
+    const name = file.getName().split(' ')[0]
+    if(!names.includes(name)){
+      DriveApp.getFileById(file.getId()).setTrashed(true)
+    }
+  }
 }
 
 function makeWorkerList() : string[]{

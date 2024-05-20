@@ -1,12 +1,34 @@
-function AssignAllPartTask() : void {
-  makeWorkerSheet()
+function assignAllPartTask() : void {
+  deleteNotWorkerSheets()
+  makeWorkerSheets()
+  cleanWorkerSheets()
   const partSheets = getPartSheets()
   partSheets.forEach(sheet=>{
-    AssignPartTask(sheet)
+    assignPartTask(sheet)
   })
 }
 
-function AssignPartTask(sheet : Sheet) : void {
+function cleanWorkerSheets() : void {
+  const files = getWorkerSpreadSheets()
+  files.forEach(file=>{
+    const workerSpreadsheet = SpreadsheetApp.openById(file.getId())
+    cleanWorkerSheet(workerSpreadsheet)
+  })
+}
+
+function cleanWorkerSheet(spreadSheet :Spreadsheet): void {
+  const workerSheet = spreadSheet.getSheetByName('작업');
+  if (!workerSheet) {
+    console.error(`작업 시트를 찾을 수 없습니다: ${spreadSheet.getName()}`);
+    return;
+  }
+
+  const startRange = spreadSheet.getRangeByName(workerSheet.getName()+'!작업자데이터시작');
+  const syncRange = getSyncRange(startRange)
+  syncRange.clear()
+}
+
+function assignPartTask(sheet : Sheet) : void {
   const templatePartData = getRangeByName('파트데이터시작');
   let startRow = templatePartData.getRow();
   const startColumn = templatePartData.getColumn();
@@ -15,14 +37,14 @@ function AssignPartTask(sheet : Sheet) : void {
   let partDataRange = sheet.getRange(startRow, startColumn, 1, lastColumn - startColumn + 1);
   let record = partDataRange.getValues()[0];
   while (record[0]) {
-    AssignTask(record);
+    assignTask(record);
     startRow += 1;
     partDataRange = sheet.getRange(startRow, startColumn, 1, lastColumn - startColumn + 1);
     record = partDataRange.getValues()[0];
   }
 }
 
-function AssignTask(record : any[], overwrite : boolean = false) : void {
+function assignTask(record : any[], overwrite : boolean = false) : void {
   const worker = record[FieldOffset.WORKER]
   const numFieldName = '작업자'+FieldName.NUMBER+'필드'
   if(!worker){
