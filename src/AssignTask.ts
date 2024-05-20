@@ -2,10 +2,22 @@ function assignAllPartTask() : void {
   deleteNotWorkerSheets()
   makeWorkerSheets()
   cleanWorkerSheets()
-  const partSheets = getPartSheets()
-  partSheets.forEach(sheet=>{
-    assignPartTask(sheet)
+  assignWorkersTask()
+}
+
+function assignWorkersTask() : void {
+  const files = getWorkerSpreadSheets()
+  files.forEach(file=>{
+    const spreadsheet = SpreadsheetApp.openById(file.getId());
+    assignWorkerTask(spreadsheet)
   })
+}
+
+function assignWorkerTask(workerSpreadSheet : Spreadsheet) : void {
+  const workerName = workerSpreadSheet.getName().split(' ')[0]
+  const workerTaskData = getWorkerTaskData(workerName)
+  const dataRange = workerSpreadSheet.getRangeByName('작업자데이터시작');
+  dataRange.offset(0,0,workerTaskData.length,dataRange.getNumColumns()).setValues(workerTaskData)
 }
 
 function cleanWorkerSheets() : void {

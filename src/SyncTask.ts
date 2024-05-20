@@ -63,7 +63,7 @@ function reportWorkerTask(record : any[]){
   insertRecord(record, manageSpreadsheet, reportSheet, numFieldName, insertRow)
 }
 
-function getWorkerData(worker: string): any[][] {
+function getWorkerTaskData(worker: string): any[][] {
 
   const settingsSheet = getSheetByName('설정');
   const partRange = getRangeByName('파트시작');
@@ -103,8 +103,8 @@ function getWorkerData(worker: string): any[][] {
   });
 
   records.sort((a, b) => {
-    let aOrd = a[FieldOffset.CUT_NUMBER].split('C')[1]
-    let bOrd = b[FieldOffset.CUT_NUMBER].split('C')[1]
+    let aOrd = a[FieldOffset.NUMBER]//a[FieldOffset.CUT_NUMBER].split('C')[1]
+    let bOrd = b[FieldOffset.NUMBER]//b[FieldOffset.CUT_NUMBER].split('C')[1]
     return aOrd - bOrd
   })
   return records;
