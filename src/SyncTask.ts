@@ -37,8 +37,8 @@ function SyncWorkerToPart() : void {
 function getDataRange(startRange: Range) : Range {
   const dataStartRow = startRange.getRow()
   const dataEndRow = getLastDataRowInRange(startRange)
-  const syncRange = startRange.offset(0, 0, dataEndRow - dataStartRow + 1, startRange.getNumColumns())
-  return syncRange
+  const dataRange = startRange.offset(0, 0, dataEndRow - dataStartRow + 1, startRange.getNumColumns())
+  return dataRange
 }
 
 function getSyncData(startRange : Range, callback: (row : string[]) => string[]) : string[][]{
