@@ -1,4 +1,4 @@
-function getSheetByName(name: string) {
+function getSheetByName(name: string) : Sheet {
   const ss = getSpreadsheet();
   const sheet = ss.getSheetByName(name);
   if (!sheet) {
@@ -7,7 +7,7 @@ function getSheetByName(name: string) {
   return sheet;
 }
 
-function getRangeByName(name: string) {
+function getRangeByName(name: string) : Range {
   const ss = getSpreadsheet();
   const range = ss.getRangeByName(name);
   if (!range) {
@@ -88,24 +88,24 @@ function RangeIntersect_(R1 : Range, R2 : Range) {
   return (R1.getLastRow() >= R2.getRow()) && (R2.getLastRow() >= R1.getRow()) && (R1.getLastColumn() >= R2.getColumn()) && (R2.getLastColumn() >= R1.getColumn());
 }
 
-function getCutCount() : number{
+function getCutCount() : number {
   const cutCountRange = getRangeByName("컷수")
   return cutCountRange.offset(0,1).getValue()
 }
 
-function getProjectName() {
+function getProjectName() : string {
   const settingSheet = getSheetByName('설정');
   const projectNameRange = getRangeByName('프로젝트명');
   return settingSheet.getRange(projectNameRange.getRow(), projectNameRange.getColumn()+1).getValue();
 }
 
-function getFilesInFolder(folderId){
+function getFilesInFolder(folderId : string) : FileIterator{
   const folder = DriveApp.getFolderById(folderId);
   const files = folder.getFiles();
   return files;
 }
 
-function getOrCreateFolderByName(folderName: string): GoogleAppsScript.Drive.Folder {
+function getOrCreateFolderByName(folderName: string): Folder {
   const folders = DriveApp.getFoldersByName(folderName);
   if (folders.hasNext()) {
     return folders.next();
@@ -114,7 +114,7 @@ function getOrCreateFolderByName(folderName: string): GoogleAppsScript.Drive.Fol
   }
 }
 
-function getOrCreateSpreadsheetByNameInFolder(folderId: string, fileName: string): GoogleAppsScript.Spreadsheet.Spreadsheet {
+function getOrCreateSpreadsheetByNameInFolder(folderId: string, fileName: string): Spreadsheet {
   const folder = DriveApp.getFolderById(folderId);
   const files = folder.getFilesByName(fileName);
   
@@ -130,7 +130,7 @@ function getOrCreateSpreadsheetByNameInFolder(folderId: string, fileName: string
   }
 }
 
-function isNewSpreadSheet(spreadSheet: GoogleAppsScript.Spreadsheet.Spreadsheet): boolean {
+function isNewSpreadSheet(spreadSheet: Spreadsheet): boolean {
   return spreadSheet.getSheets().length === 1 && spreadSheet.getSheets()[0].getName() === '시트1';
 }
 
@@ -297,7 +297,7 @@ function getManifestFile(projectId: string): any {
   }
 }
 
-function getPartSheets(){
+function getPartSheets() : Sheet[]{
   const ss = getSpreadsheet();
   const result = []
   ss.getSheets().forEach(sheet => {
@@ -309,7 +309,7 @@ function getPartSheets(){
   return result
 }
 
-function getWorkerSpreadSheets(){
+function getWorkerSpreadSheets() : File[]{
   const folderId = getOrCreateFolderByName(getProjectName()).getId();
   const files = getFilesInFolder(folderId);
   const result = []
@@ -322,7 +322,7 @@ function getWorkerSpreadSheets(){
   return result
 }
 
-function isWorkerSpreadSheet(file){
+function isWorkerSpreadSheet(file : File) : boolean{
   return file.getName().endsWith(' 작업');
 }
 
@@ -332,7 +332,7 @@ function setActiveSpreadsheetId() {
   scriptProperties.setProperty('SPREADSHEET_ID', spreadsheetId);
 }
 
-function getSpreadsheet() {
+function getSpreadsheet() : Spreadsheet{
   const scriptProperties = PropertiesService.getScriptProperties();
   const spreadsheetId = scriptProperties.getProperty('SPREADSHEET_ID');
   if (!spreadsheetId) {
