@@ -40,7 +40,10 @@
 
       // Table header
       const headerRow = document.createElement('tr');
-      const headers = ['연번', '컷', '파트', '시작일', '종료일', '기간', '제출일자', '진행 현황', '보고'];
+      const headers = ['연번', '컷', '작업자', '파트', '시작일', '종료일', '기간', '보고횟수', '제출일자', '마감일정', '진행 현황', '보고'];
+      let options = '<?= options ?>';
+      options = options.split(',');
+      console.log(options)
       headers.forEach(header => {
         const th = document.createElement('th');
         th.textContent = header;
@@ -52,15 +55,14 @@
       data.forEach((row, index) => {
         const tr = document.createElement('tr');
 
-        const numberCell = document.createElement('td');
-        numberCell.textContent = (index + 1).toString(); // 연번 생성
-        tr.appendChild(numberCell);
+        //const numberCell = document.createElement('td');
+        //numberCell.textContent = (index + 1).toString(); // 연번 생성
+        //tr.appendChild(numberCell);
 
         row.forEach((cell, cellIndex) => {
           const td = document.createElement('td');
-          if (cellIndex === 6) { // 진행 현황 필드 (8번째)
+          if (cellIndex === 10) { // 진행 현황 필드 (8번째)
             const select = document.createElement('select');
-            const options = ['진행중', '완료', '대기중']; // 목업 데이터
             options.forEach(option => {
               const opt = document.createElement('option');
               opt.value = option;
@@ -102,6 +104,7 @@
           records.push(record);
         }
       });
+      alert('보고할 데이터: ' + JSON.stringify(records));
       google.script.run.ReportRecords(records);
     }
 
