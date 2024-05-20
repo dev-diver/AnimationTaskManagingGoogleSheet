@@ -17,7 +17,7 @@ function getRangeByName(name: string) {
 }
 
 
-function getRowValues(sheet: GoogleAppsScript.Spreadsheet.Sheet, row: number, column: number): string[] {
+function getRowValues(sheet: Sheet, row: number, column: number): string[] {
   const values = [];
   let cell = sheet.getRange(row, column);
   while (cell.getValue()) {
@@ -27,7 +27,7 @@ function getRowValues(sheet: GoogleAppsScript.Spreadsheet.Sheet, row: number, co
   return values;
 }
 
-function getColumnValues(sheet: GoogleAppsScript.Spreadsheet.Sheet, row: number, column: number): string[] {
+function getColumnValues(sheet: Sheet, row: number, column: number): string[] {
   const values = [];
   let cell = sheet.getRange(row, column);
   while (cell.getValue()) {
@@ -37,7 +37,7 @@ function getColumnValues(sheet: GoogleAppsScript.Spreadsheet.Sheet, row: number,
   return values;
 }
 
-function getColumnRange(sheet: GoogleAppsScript.Spreadsheet.Sheet, row: number, column: number): GoogleAppsScript.Spreadsheet.Range {
+function getColumnRange(sheet: Sheet, row: number, column: number): Range {
   let cell = sheet.getRange(row, column);
   let i = 0;
   while (cell.getValue()) {
@@ -51,7 +51,7 @@ function getColumnRange(sheet: GoogleAppsScript.Spreadsheet.Sheet, row: number, 
   return range;
 }
 
-function getRowRange(sheet: GoogleAppsScript.Spreadsheet.Sheet, row: number, column: number): GoogleAppsScript.Spreadsheet.Range {
+function getRowRange(sheet: Sheet, row: number, column: number): Range {
   let cell = sheet.getRange(row, column);
   let i = 0;
   while (cell.getValue()) {
@@ -65,7 +65,7 @@ function getRowRange(sheet: GoogleAppsScript.Spreadsheet.Sheet, row: number, col
   return range;
 }
 
-function getLastDataRowInRange(range: GoogleAppsScript.Spreadsheet.Range): number {
+function getLastDataRowInRange(range: Range): number {
   const sheet = range.getSheet();
   const startRow = range.getRow();
   const sheetLastRow = sheet.getLastRow();
