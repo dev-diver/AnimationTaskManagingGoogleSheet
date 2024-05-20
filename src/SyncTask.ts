@@ -1,9 +1,14 @@
 
 function SyncPartDataToWorker() : void {
-  const activeSheet = getSpreadsheet();
+  const activeSheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet()
   const startRange = getRangeByName(activeSheet.getName()+'!파트데이터시작');
-  const SyncData = getSyncData(startRange)
-  SyncData.forEach(data=>{
+  const SyncData = getSyncData(startRange, (row : any[])=>{
+    if(row[FieldOffset.REPORT] === true){
+      row[FieldOffset.REPORT] = false
+    }
+    return row
+  })
+  SyncData.forEach(data => {
     assignTask(data,true)
   })
 }
@@ -12,35 +17,39 @@ function SyncWorkerToPart() : void {
   const ss = SpreadsheetApp.getActiveSpreadsheet()
   const activeSheet = ss.getActiveSheet()
   const startRange = ss.getRangeByName(activeSheet.getName()+'!작업자데이터시작');
-  const syncData = getSyncData(startRange)
+  const date = new Date()//Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy. M. dd');
+
+  const syncData = getSyncData(startRange, (row : any[]) => {
+    if(row[FieldOffset.REPORT] === true){
+      row[FieldOffset.REPORT_COUNT] += 1
+      row[FieldOffset.REPORT_DATE] = date
+      row[FieldOffset.REPORT] = false
+    }
+    return row
+  })
 
   syncData.forEach(data=>{
     syncAndReportWorkerTask(data)
   })
 }
 
-// function getReportDataAndChangeDate(rng : Range) : any[][]{
-//   const data = rng.getValues()
-//   const date = new Date()
-//   data.forEach(row=>{
-//     if(row[FieldOffset.REPORT_DATE] === ''){
-//     row[FieldOffset.REPORT_DATE] = date
 
-//   })
-//   return data
-// }
-
-function getSyncRange(startRange: Range) : Range {
+function getDataRange(startRange: Range) : Range {
   const dataStartRow = startRange.getRow()
-  const dataStartColumn = startRange.getColumn()
   const dataEndRow = getLastDataRowInRange(startRange)
-  const syncRange = startRange.getSheet().getRange(dataStartRow, dataStartColumn, dataEndRow, startRange.getLastColumn()-dataStartColumn+1)
+  const syncRange = startRange.offset(0, 0, dataEndRow - dataStartRow + 1, startRange.getNumColumns())
   return syncRange
 }
 
-function getSyncData(startRange : Range) : any[][]{
-  const syncRange = getSyncRange(startRange)
-  return syncRange.getValues()
+function getSyncData(startRange : Range, callback: (row : string[]) => string[]) : string[][]{
+  const syncRange = getDataRange(startRange)
+  const data = syncRange.getValues()
+  const newData = data.map(row=>callback([...row]))
+  const filteredData = data
+    .map((row, i) => row[FieldOffset.REPORT] === true ? newData[i] : null)
+    .filter(row => row !== null);
+  syncRange.setValues(newData)
+  return filteredData
 }
 
 function syncAndReportWorkerTask(record : any[]){
@@ -98,7 +107,7 @@ function getWorkerTaskData(worker: string): any[][] {
       const sheet = getSheetByName(newSheetName);
       if (sheet) {
         const startRange = getRangeByName(sheet.getName()+'!파트데이터시작');
-        const SyncData = getSyncData(startRange)
+        const SyncData = getSyncData(startRange, (row : any[])=>row )
         SyncData.forEach(data=>{
           if(data[FieldOffset.WORKER] === worker){
             // data = data.map((value) => {

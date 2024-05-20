@@ -61,7 +61,6 @@ function performAdditionalTasks() : void {
         fillCheckBox(spreadsheet, sheet.getName()+'!파트데이터시작', FieldOffset.REPORT);
         fillCheckBox(spreadsheet, sheet.getName()+'!파트데이터시작', FieldOffset.REPORT+1);
         copyColumnFormats(spreadsheet, spreadsheet,'파트데이터시작', '파트데이터시작');
-
         //드롭다운 적용
         updateWorkerDropdown(startColumn + 1 + i);
         updateProgressDropdown(newSheetName);

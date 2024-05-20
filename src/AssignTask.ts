@@ -58,7 +58,7 @@ function cleanWorkerSheet(spreadSheet :Spreadsheet): void {
   }
 
   const startRange = spreadSheet.getRangeByName(workerSheet.getName()+'!작업자데이터시작');
-  const syncRange = getSyncRange(startRange)
+  const syncRange = getDataRange(startRange)
   syncRange.clear()
 }
 
