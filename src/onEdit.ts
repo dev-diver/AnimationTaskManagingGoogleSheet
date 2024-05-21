@@ -8,8 +8,8 @@ function onEdit(e: GoogleAppsScript.Events.SheetsOnEdit): void {
   if(sheetName.endsWith('파트')){
     const startRange = SpreadsheetApp.getActiveSpreadsheet().getRangeByName(sheetName+'!파트데이터시작');
     let targetRange = getDataRange(startRange)
-    targetRange = targetRange.offset(0, 0, targetRange.getNumRows(), targetRange.getNumColumns()-1);
-    const checkboxColumnIndex = 13; // 체크박스가 위치한 열의 인덱스 (예: C열이면 3)
+    const checkboxColumnIndex = targetRange.getColumn() + FieldOffset.REPORT
+    targetRange = targetRange.offset(0, FieldOffset.START_DATE, targetRange.getNumRows(), targetRange.getNumColumns()-FieldOffset.START_DATE-1);
     
     // 변경된 셀이 targetRange 내에 있는지 확인
     if (RangeIntersect_(editedRange, targetRange)) {
