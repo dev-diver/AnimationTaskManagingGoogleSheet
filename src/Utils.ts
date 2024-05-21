@@ -1,3 +1,9 @@
+function getShareDriveFolderId(){
+  const scriptProperties = PropertiesService.getScriptProperties();
+  const driveId = scriptProperties.getProperty('DRIVE_ID');
+  return driveId;
+}
+
 function getMainSheetByName(name: string) : Sheet {
   const scriptProperties = PropertiesService.getScriptProperties();
   const spreadsheetId = scriptProperties.getProperty('SPREADSHEET_ID');
@@ -110,6 +116,16 @@ function getFilesInFolder(folderId : string) : FileIterator{
   return files;
 }
 
+function getOrCreateFolderInSharedDrive(sharedDriveId: string, folderName: string): GoogleAppsScript.Drive.Folder {
+  const drive = DriveApp.getFolderById(sharedDriveId);
+  const folders = drive.getFoldersByName(folderName);
+  if (folders.hasNext()) {
+    return folders.next();
+  } else {
+    return drive.createFolder(folderName);
+  }
+}
+
 function getOrCreateFolderByName(folderName: string): Folder {
   const folders = DriveApp.getFoldersByName(folderName);
   if (folders.hasNext()) {
@@ -201,7 +217,7 @@ function copyLibrarySettingToProject(sourceScriptId: string, targetScriptId: str
     throw new Error(`Manifest file "appsscript.json" not found in source project ${sourceScriptId}`);
   }
 
-  manifestFile.source = addLibraryToManifest(JSON.parse(manifestFile.source), sourceScriptId);
+  // manifestFile.source = addLibraryToManifest(JSON.parse(manifestFile.source), sourceScriptId);
 
   const targetPayload = {
     files: [
@@ -315,7 +331,8 @@ function getPartSheets() : Sheet[]{
 }
 
 function getWorkerSpreadSheets() : File[]{
-  const folderId = getOrCreateFolderByName(getProjectName()).getId();
+  const driveId = getShareDriveFolderId()
+  const folderId = getOrCreateFolderInSharedDrive(driveId,getProjectName()).getId();
   const files = getFilesInFolder(folderId);
   const result = []
   while(files.hasNext()){

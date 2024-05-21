@@ -3,7 +3,8 @@ function makeWorkerSheets() : void {
   const newSheetName = '작업';
   const templateSheet = getMainSheetByName(templateSheetName);
   const projectName = getProjectName();
-  const folderId = getOrCreateFolderByName(projectName).getId();
+  const driveId = getShareDriveFolderId()
+  const folderId = getOrCreateFolderInSharedDrive(driveId,projectName).getId();
   const scriptId = ScriptApp.getScriptId();
 
   let names : string[] = makeWorkerList()
@@ -29,7 +30,8 @@ function makeWorkerSheets() : void {
 
 function deleteNotWorkerSheets() : void { 
   const projectName = getProjectName();
-  const folderId = getOrCreateFolderByName(projectName).getId();
+  const driveId = getShareDriveFolderId()
+  const folderId = getOrCreateFolderInSharedDrive(driveId,projectName).getId();
   const names = makeWorkerList()
   const files = getFilesInFolder(folderId)
   while(files.hasNext()){
