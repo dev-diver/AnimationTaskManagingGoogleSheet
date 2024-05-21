@@ -1,5 +1,10 @@
-function getSheetByName(name: string) : Sheet {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+function getMainSheetByName(name: string) : Sheet {
+  const scriptProperties = PropertiesService.getScriptProperties();
+  const spreadsheetId = scriptProperties.getProperty('SPREADSHEET_ID');
+  let ss = SpreadsheetApp.getActiveSpreadsheet();
+  if(ss.getId()!=spreadsheetId){
+    ss = SpreadsheetApp.openById(spreadsheetId);
+  }
   const sheet = ss.getSheetByName(name);
   if (!sheet) {
     throw new Error(`${name} 시트를 찾을 수 없습니다.`);
@@ -94,7 +99,7 @@ function getCutCount() : number {
 }
 
 function getProjectName() : string {
-  const settingSheet = getSheetByName('설정');
+  const settingSheet = getMainSheetByName('설정');
   const projectNameRange = getRangeByName('프로젝트명');
   return settingSheet.getRange(projectNameRange.getRow(), projectNameRange.getColumn()+1).getValue();
 }

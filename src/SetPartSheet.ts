@@ -9,7 +9,7 @@ function applyPart() : void {
 }
 
 function getPartValues(){
-  const settingsSheet = getSheetByName('설정');
+  const settingsSheet = getMainSheetByName('설정');
   const partRange = getRangeByName('파트시작');
   const startRow = partRange.getRow();
   const startColumn = partRange.getColumn();
@@ -20,7 +20,7 @@ function getPartValues(){
 function createPartSheets() : void {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
 
-  const templateSheet = getSheetByName('파트 템플릿');
+  const templateSheet = getMainSheetByName('파트 템플릿');
   const values = getPartValues()
   const partSheetNames = values.map(part => part.trim() + ' 파트')
 
@@ -51,7 +51,7 @@ function additionalPartSheetTasks() : void {
     if (part) {
       const newSheetName = part.trim() + ' 파트';
       const startRangeName = newSheetName + '!' + FieldName.NUMBER + '필드';
-      const sheet = getSheetByName(newSheetName);
+      const sheet = getMainSheetByName(newSheetName);
       if (sheet) {
 
         clearOverCutCount(sheet, startRangeName);
@@ -61,6 +61,7 @@ function additionalPartSheetTasks() : void {
         fillTemplateData(sheet, '파트 템플릿!파트데이터시작')
         fillCheckBox(spreadsheet, sheet.getName()+'!파트데이터시작', FieldOffset.REPORT);
         fillCheckBox(spreadsheet, sheet.getName()+'!파트데이터시작', FieldOffset.REPORT+1);
+        fillCheckBox(spreadsheet, sheet.getName()+'!파트데이터시작', FieldOffset.REPORT+2);
         copyColumnFormats(spreadsheet, spreadsheet,'파트데이터시작', '파트데이터시작');
         //드롭다운 적용
         updateWorkerDropdown(newSheetName);

@@ -1,9 +1,10 @@
 function assignAllPartTask() : void {
+  
   deleteNotWorkerSheets()
   makeWorkerSheets()
+  
   cleanWorkerSheets()
   assignWorkersTask()
-  
 }
 
 function applyWorkerSheetFormat(spreadsheet : Spreadsheet){
@@ -12,7 +13,7 @@ function applyWorkerSheetFormat(spreadsheet : Spreadsheet){
   const progressRange = getRangeByName('진행상태');
   const startRow = progressRange.getRow()+1;
   const dataColumn = progressRange.getColumn();
-  const dropdownInfoRange = getColumnRange(getSheetByName("설정"), startRow, dataColumn);
+  const dropdownInfoRange = getColumnRange(getMainSheetByName("설정"), startRow, dataColumn);
 
   const sheet = spreadsheet.getSheetByName('작업');
   const applyFieldRange = getRangeByName("작업자진행현황필드")

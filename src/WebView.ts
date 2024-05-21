@@ -59,7 +59,7 @@ function getOptions() {
   const progressRange = getRangeByName('진행상태');
   const startRow = progressRange.getRow();
   const dataColumn = progressRange.getColumn() + 1;
-  const options = getColumnValues(getSheetByName("설정"), startRow, dataColumn);
+  const options = getColumnValues(getMainSheetByName("설정"), startRow, dataColumn);
   return options;
 }
 

@@ -1,7 +1,7 @@
 function makeWorkerSheets() : void {
   const templateSheetName = '작업자 템플릿';
   const newSheetName = '작업';
-  const templateSheet = getSheetByName(templateSheetName);
+  const templateSheet = getMainSheetByName(templateSheetName);
   const projectName = getProjectName();
   const folderId = getOrCreateFolderByName(projectName).getId();
   const scriptId = ScriptApp.getScriptId();
@@ -42,7 +42,7 @@ function deleteNotWorkerSheets() : void {
 }
 
 function makeWorkerList() : string[]{
-  const settingsSheet = getSheetByName('설정');
+  const settingsSheet = getMainSheetByName('설정');
   const partRange = getRangeByName('작업자');
   const startRow = partRange.getRow();
   const startColumn = partRange.getColumn();

@@ -61,7 +61,7 @@ function syncAndReportWorkerTask(record : any[]){
   }
 
   const manageSpreadsheet = getMainSpreadsheet()
-  const partSheet = getSheetByName(part + " 파트")
+  const partSheet = getMainSheetByName(part + " 파트")
   if(!partSheet){
     throw new Error("파트 시트가 없습니다.")
   }
@@ -77,7 +77,7 @@ function syncAndReportWorkerTask(record : any[]){
 
 function reportWorkerTask(record : any[]){
   const manageSpreadsheet = getMainSpreadsheet()
-  const reportSheet = getSheetByName("로그")
+  const reportSheet = getMainSheetByName("로그")
   const numFieldName = '로그'+FieldName.NUMBER+'필드'
   const insertRow = reportSheet.getLastRow() + 1
   insertRecord(record, manageSpreadsheet, reportSheet, numFieldName, insertRow)
@@ -86,6 +86,7 @@ function reportWorkerTask(record : any[]){
 function getWorkerTaskData(worker: string): any[][] {
 
   const values = getPartValues()
+  console.log(values)
 
   let records = []
   const indicies = [
@@ -99,10 +100,11 @@ function getWorkerTaskData(worker: string): any[][] {
   values.forEach((part,i) => {
     if (part) {
       const newSheetName = part.trim() + ' 파트';
-      const sheet = getSheetByName(newSheetName);
+      const sheet = getMainSheetByName(newSheetName);
       if (sheet) {
         const startRange = getRangeByName(sheet.getName()+'!파트데이터시작');
-        const SyncData = getSyncData(startRange, (row : any[])=>row )
+        const SyncData = getDataRange(startRange).getValues()
+        console.log("sync data", SyncData)
         SyncData.forEach(data=>{
           if(data[FieldOffset.WORKER] === worker){
             // data = data.map((value) => {
@@ -111,6 +113,7 @@ function getWorkerTaskData(worker: string): any[][] {
             records.push(data)
           }
         })
+        console.log("records", records)
       }else{
         throw Error('파트 시트가 존재하지 않습니다.')
       }

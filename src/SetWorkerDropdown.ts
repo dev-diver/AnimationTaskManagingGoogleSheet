@@ -3,7 +3,7 @@ function updateWorkerDropdown(sheetName : string) : void{
   const progressRange = getRangeByName('작업자');
   const startRow = progressRange.getRow() + 1;
   const dataColumn = progressRange.getColumn();
-  const dropdownInfoRange = getColumnRange(getSheetByName("설정"), startRow, dataColumn);
+  const dropdownInfoRange = getColumnRange(getMainSheetByName("설정"), startRow, dataColumn);
   
   //적용 범위 선택
   const applyFieldRange = getRangeByName("작업자필드")
@@ -17,7 +17,7 @@ function updateProgressDropdown(sheetName : string) : void {
   const progressRange = getRangeByName('진행상태');
   const startRow = progressRange.getRow() + 1;
   const dataColumn = progressRange.getColumn();
-  const dropdownInfoRange = getColumnRange(getSheetByName("설정"), startRow, dataColumn);
+  const dropdownInfoRange = getColumnRange(getMainSheetByName("설정"), startRow, dataColumn);
 
   //적용 범위 선택
   const applyFieldRange = getRangeByName("진행현황필드")
@@ -29,7 +29,7 @@ function updateProgressDropdown(sheetName : string) : void {
 function makeApplyRange(sheetName : string, applyFieldRange : Range, cutCount : number) : Range {
   const dataRow = applyFieldRange.getRow() + 1;
   const dataColumn = applyFieldRange.getColumn();
-  const applyRange = getSheetByName(sheetName).getRange(dataRow, dataColumn, cutCount);
+  const applyRange = getMainSheetByName(sheetName).getRange(dataRow, dataColumn, cutCount);
   return applyRange
 }
 
