@@ -1,5 +1,5 @@
 function getSheetByName(name: string) : Sheet {
-  const ss = getSpreadsheet();
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = ss.getSheetByName(name);
   if (!sheet) {
     throw new Error(`${name} 시트를 찾을 수 없습니다.`);
