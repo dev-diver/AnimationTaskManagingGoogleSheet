@@ -110,9 +110,9 @@ function getWorkerTaskData(worker: string): any[][] {
       const sheet = getMainSheetByName(newSheetName);
       if (sheet) {
         const startRange = getRangeByName(sheet.getName()+'!파트데이터시작');
-        const SyncData = getDataRange(startRange).getValues()
-        console.log("sync data", SyncData)
-        SyncData.forEach(data=>{
+        const syncData = getDataRange(startRange).getValues()
+        console.log("sync data", syncData)
+        syncData.forEach(data=>{
           if(data[FieldOffset.WORKER] === worker){
             // data = data.map((value) => {
             //   return indicies.map(index => value[index])

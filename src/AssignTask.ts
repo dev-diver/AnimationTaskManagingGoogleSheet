@@ -38,9 +38,10 @@ function assignWorkersTask() : void {
 function assignWorkerTask(workerSpreadSheet : Spreadsheet) : void {
   const workerName = workerSpreadSheet.getName().split(' ')[0]
   const workerTaskData = getWorkerTaskData(workerName)
-  const dataRange = workerSpreadSheet.getRangeByName('작업자데이터시작');
+
+  const targetRange = workerSpreadSheet.getRangeByName('작업자데이터시작');
   if(workerTaskData.length!=0){
-    dataRange.offset(0,0,workerTaskData.length,dataRange.getNumColumns()).setValues(workerTaskData)
+    targetRange.offset(0,0,workerTaskData.length,targetRange.getNumColumns()).setValues(workerTaskData)
   }
 }
 
