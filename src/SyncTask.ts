@@ -2,13 +2,13 @@
 function SyncPartDataToWorker() : void {
   const activeSheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet()
   const startRange = getRangeByName(activeSheet.getName()+'!파트데이터시작');
-  const SyncData = getSyncData(startRange, (row : any[])=>{
+  const syncData = getSyncData(startRange, (row : any[])=>{
     if(row[FieldOffset.REPORT] === true){
       row[FieldOffset.REPORT] = false
     }
     return row
   })
-  SyncData.forEach(data => {
+  syncData.forEach(data => {
     assignTask(data,true)
   })
 }
@@ -41,12 +41,19 @@ function getDataRange(startRange: Range) : Range {
   return dataRange
 }
 
-function getSyncData(startRange : Range, callback: (row : string[]) => string[]) : string[][]{
+function getSyncData(startRange : Range, callback: (row : string[]) => any[]) : string[][]{
   const syncRange = getDataRange(startRange)
   const data = syncRange.getValues()
   const newData = data.map(row=>callback([...row]))
   const filteredData = data
-    .map((row, i) => row[FieldOffset.REPORT] === true ? newData[i] : null)
+    .map((row, i) =>{
+      if(row[FieldOffset.REPORT] === true){
+        const result = [...newData[i]]
+        result[FieldOffset.ALARM] = true
+        return result
+      }
+      return null
+    })
     .filter(row => row !== null);
   syncRange.setValues(newData)
   return filteredData
