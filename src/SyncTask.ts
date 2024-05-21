@@ -1,5 +1,5 @@
 
-function SyncPartDataToWorker() : void {
+function syncPartDataToWorker() : void {
   const activeSheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet()
   const startRange = getRangeByName(activeSheet.getName()+'!파트데이터시작');
   const syncData = getSyncData(startRange, (row : any[])=>{
@@ -13,7 +13,7 @@ function SyncPartDataToWorker() : void {
   })
 }
 
-function SyncWorkerToPart() : void {
+function syncWorkerToPart() : void {
   const ss = SpreadsheetApp.getActiveSpreadsheet()
   const activeSheet = ss.getActiveSheet()
   const startRange = ss.getRangeByName(activeSheet.getName()+'!작업자데이터시작');
@@ -93,7 +93,6 @@ function reportWorkerTask(record : any[]){
 function getWorkerTaskData(worker: string): any[][] {
 
   const values = getPartValues()
-  console.log(values)
 
   let records = []
   const indicies = [
@@ -111,7 +110,6 @@ function getWorkerTaskData(worker: string): any[][] {
       if (sheet) {
         const startRange = getRangeByName(sheet.getName()+'!파트데이터시작');
         const syncData = getDataRange(startRange).getValues()
-        console.log("sync data", syncData)
         syncData.forEach(data=>{
           if(data[FieldOffset.WORKER] === worker){
             // data = data.map((value) => {
@@ -120,7 +118,6 @@ function getWorkerTaskData(worker: string): any[][] {
             records.push(data)
           }
         })
-        console.log("records", records)
       }else{
         throw Error('파트 시트가 존재하지 않습니다.')
       }

@@ -43,7 +43,6 @@
       const headers = ['연번', '컷', '작업자', '파트', '시작일', '종료일', '기간', '보고횟수', '제출일자', '마감일정', '진행 현황', '보고'];
       let options = '<?= options ?>';
       options = options.split(',');
-      console.log(options)
       headers.forEach(header => {
         const th = document.createElement('th');
         th.textContent = header;

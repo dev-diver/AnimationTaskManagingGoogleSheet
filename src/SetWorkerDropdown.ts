@@ -111,10 +111,8 @@ function isSameDropdown(infoRange : Range, applyRange : Range) : boolean {
     .setAllowInvalid(false)
     .build();
 
-  console.log(currentRule,newRule)
   const currentRuleValues = currentRule?.getCriteriaValues()
   const newRuleValues = newRule.getCriteriaValues()
   
-  console.log(currentRuleValues, newRuleValues)
   return JSON.stringify(currentRuleValues) === JSON.stringify(newRuleValues);
 }

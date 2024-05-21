@@ -25,7 +25,6 @@ function findSameRecordRow(record : any[], workerSpreadsheet : Spreadsheet, work
   const cutValue = record[FieldOffset.CUT_NUMBER]
   let compareRow = dataStartRow + findInsertPositionIn(workerCutValues, cutValue) - 1;
   while(workerSheet.getRange(compareRow, workerCutValueColumn).getValue()==cutValue){
-    console.log("comparePosition", compareRow, workerSheet.getRange(compareRow, workerCutValueColumn).getValue())
     if(isSameRecord(record, workerSpreadsheet, workerSheet, startRangeName, compareRow)){
       return compareRow
     }
