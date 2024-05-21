@@ -53,10 +53,10 @@ function findInsertPositionIn(cutValues :string[], compareValue: string) : numbe
   return left
 }
 
-function overwriteRecord(record: any[], workerSpreadsheet: Spreadsheet, workerSheet: Sheet, startRangeName: string, insertRow: number): void {
-  const startRange = workerSpreadsheet.getRangeByName(startRangeName);
+function overwriteRecord(record: any[], targetSpreadsheet: Spreadsheet, targetSheet: Sheet, startRangeName: string, targetRow: number): void {
+  const startRange = targetSpreadsheet.getRangeByName(startRangeName);
   const workerStartColumn = startRange.getColumn();
-  const workerDataRange = workerSheet.getRange(insertRow, workerStartColumn, 1, record.length);
+  const workerDataRange = targetSheet.getRange(targetRow, workerStartColumn, 1, record.length);
   // 값 복사
   workerDataRange.setValues([record]);
 

@@ -131,15 +131,17 @@ function getWorkerTaskData(worker: string): any[][] {
 function reportCheck(sheet : Sheet, editedRange : Range){
   const sheetName = sheet.getName();
   const startRange = SpreadsheetApp.getActiveSpreadsheet().getRangeByName(sheetName+'!작업자데이터시작');
-    let targetRange = getDataRange(startRange)
-    targetRange = targetRange.offset(0, FieldOffset.PROGRESS_STATE, targetRange.getNumRows(), 1);
-    const checkboxColumnIndex = 12; 
+  const dataRange = getDataRange(startRange)
+  const targetRange = dataRange.offset(0, FieldOffset.PROGRESS_STATE, dataRange.getNumRows(), 1);
+  const reportColumn = dataRange.getColumn() + FieldOffset.REPORT
+  const alarmColumn = dataRange.getColumn() + FieldOffset.ALARM
     
-    // 변경된 셀이 targetRange 내에 있는지 확인
-    if (RangeIntersect_(editedRange, targetRange)) {
-      // 변경된 셀의 행 번호를 가져옴
-      const row = editedRange.getRow();
-      // 체크박스 열의 셀을 가져와서 TRUE로 설정
-      sheet.getRange(row, checkboxColumnIndex).setValue(true);
-    }
+  // 변경된 셀이 targetRange 내에 있는지 확인
+  if (RangeIntersect_(editedRange, targetRange)) {
+    // 변경된 셀의 행 번호를 가져옴
+    const row = editedRange.getRow();
+    // 체크박스 열의 셀을 가져와서 TRUE로 설정
+    sheet.getRange(row, reportColumn).setValue(true);
+    sheet.getRange(row, alarmColumn).setValue(false);
+  }
 }
