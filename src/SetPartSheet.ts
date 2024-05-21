@@ -8,16 +8,20 @@ function applyPart() : void {
   makeWorkerSheets();
 }
 
+function getPartValues(){
+  const settingsSheet = getSheetByName('설정');
+  const partRange = getRangeByName('파트시작');
+  const startRow = partRange.getRow();
+  const startColumn = partRange.getColumn();
+  const values = getColumnValues(settingsSheet, startRow+1, startColumn);
+  return values
+}
+
 function createPartSheets() : void {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
 
-  const settingsSheet = getSheetByName('설정');
   const templateSheet = getSheetByName('파트 템플릿');
-  const partRange = getRangeByName('파트시작');
-
-  const startRow = partRange.getRow();
-  const startColumn = partRange.getColumn();
-  const values = getRowValues(settingsSheet, startRow, startColumn+1);
+  const values = getPartValues()
   const partSheetNames = values.map(part => part.trim() + ' 파트')
 
   //파트 만들기
@@ -40,12 +44,7 @@ function createPartSheets() : void {
 }
 
 function additionalPartSheetTasks() : void {
-  const settingsSheet = getSheetByName('설정');
-  const partRange = getRangeByName('파트시작');
-
-  const startRow = partRange.getRow();
-  const startColumn = partRange.getColumn();
-  const values = getRowValues(settingsSheet, startRow, startColumn + 1);
+  const values = getPartValues()
   const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
 
   values.forEach((part,i) => {

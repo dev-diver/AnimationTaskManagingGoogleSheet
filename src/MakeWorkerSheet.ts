@@ -42,21 +42,10 @@ function deleteNotWorkerSheets() : void {
 }
 
 function makeWorkerList() : string[]{
-  const settingSheet = getSheetByName('설정');
-  const partRange = getRangeByName('파트시작');
+  const settingsSheet = getSheetByName('설정');
+  const partRange = getRangeByName('작업자');
   const startRow = partRange.getRow();
-  const startColumn = partRange.getColumn()+1;
-
-  let field = settingSheet.getRange(startRow, startColumn);
-  let names : Set<string> = new Set();
-  while(field.getValue()){
-    let worker = field.offset(1,0)
-    while(worker.getValue()){
-      let workerName = worker.getValue()
-      names.add(workerName)
-      worker = worker.offset(1,0)
-    }
-    field = field.offset(0,1)
-  }
-  return [...names]
+  const startColumn = partRange.getColumn();
+  const values = getColumnValues(settingsSheet, startRow+1, startColumn);
+  return values
 }

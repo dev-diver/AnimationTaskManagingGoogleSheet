@@ -10,8 +10,8 @@ function applyWorkerSheetFormat(spreadsheet : Spreadsheet){
   fillCheckBox(spreadsheet, '작업자데이터시작', FieldOffset.REPORT);
   // copyColumnFormats(spreadsheet, spreadsheet,'작업자데이터시작', '작업자데이터시작');
   const progressRange = getRangeByName('진행상태');
-  const startRow = progressRange.getRow();
-  const dataColumn = progressRange.getColumn() + 1;
+  const startRow = progressRange.getRow()+1;
+  const dataColumn = progressRange.getColumn();
   const dropdownInfoRange = getColumnRange(getSheetByName("설정"), startRow, dataColumn);
 
   const sheet = spreadsheet.getSheetByName('작업');

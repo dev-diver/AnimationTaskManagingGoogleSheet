@@ -85,12 +85,7 @@ function reportWorkerTask(record : any[]){
 
 function getWorkerTaskData(worker: string): any[][] {
 
-  const settingsSheet = getSheetByName('설정');
-  const partRange = getRangeByName('파트시작');
-
-  const startRow = partRange.getRow();
-  const startColumn = partRange.getColumn();
-  const values = getRowValues(settingsSheet, startRow, startColumn + 1);
+  const values = getPartValues()
 
   let records = []
   const indicies = [
