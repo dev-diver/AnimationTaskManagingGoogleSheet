@@ -22,6 +22,6 @@ function onEditDo(e: GoogleAppsScript.Events.SheetsOnEdit): void {
     }
   }else if(sheetName=='작업'){
     // this[LIBRARY_NAME].protectCheck(sheet, editedRange)
-    this[LIBRARY_NAME].reportCheck(sheet, editedRange)
+    reportCheck(sheet, editedRange)
   }
 }
