@@ -1,7 +1,7 @@
 function updateWorkerDropdown(sheetName : string) : void{
 
-  const progressRange = getRangeByName('진행상태');
-  const startRow = progressRange.getRow();
+  const progressRange = getRangeByName('작업자');
+  const startRow = progressRange.getRow() + 1;
   const dataColumn = progressRange.getColumn();
   const dropdownInfoRange = getColumnRange(getSheetByName("설정"), startRow, dataColumn);
   
@@ -15,7 +15,7 @@ function updateWorkerDropdown(sheetName : string) : void{
 function updateProgressDropdown(sheetName : string) : void {
 
   const progressRange = getRangeByName('진행상태');
-  const startRow = progressRange.getRow();
+  const startRow = progressRange.getRow() + 1;
   const dataColumn = progressRange.getColumn();
   const dropdownInfoRange = getColumnRange(getSheetByName("설정"), startRow, dataColumn);
 
