@@ -1,13 +1,15 @@
 function applyPart() : void {
   setActiveSpreadsheetId();
-  createSheetsFromSettings();
-  performAdditionalTasks();
+
+  createPartSheets();
+  additionalPartSheetTasks();
+
   deleteNotWorkerSheets()
   makeWorkerSheets();
 }
 
-function createSheetsFromSettings() : void {
-  const ss = getSpreadsheet();
+function createPartSheets() : void {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
 
   const settingsSheet = getSheetByName('설정');
   const templateSheet = getSheetByName('파트 템플릿');
@@ -37,14 +39,14 @@ function createSheetsFromSettings() : void {
   })
 }
 
-function performAdditionalTasks() : void {
+function additionalPartSheetTasks() : void {
   const settingsSheet = getSheetByName('설정');
   const partRange = getRangeByName('파트시작');
 
   const startRow = partRange.getRow();
   const startColumn = partRange.getColumn();
   const values = getRowValues(settingsSheet, startRow, startColumn + 1);
-  const spreadsheet = getSpreadsheet();
+  const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
 
   values.forEach((part,i) => {
     if (part) {
@@ -62,7 +64,7 @@ function performAdditionalTasks() : void {
         fillCheckBox(spreadsheet, sheet.getName()+'!파트데이터시작', FieldOffset.REPORT+1);
         copyColumnFormats(spreadsheet, spreadsheet,'파트데이터시작', '파트데이터시작');
         //드롭다운 적용
-        updateWorkerDropdown(startColumn + 1 + i);
+        updateWorkerDropdown(newSheetName);
         updateProgressDropdown(newSheetName);
 
         initProgressData(sheet);
