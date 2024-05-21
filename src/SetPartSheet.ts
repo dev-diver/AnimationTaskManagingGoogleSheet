@@ -53,7 +53,7 @@ function additionalPartSheetTasks() : void {
       const startRangeName = newSheetName + '!' + FieldName.NUMBER + '필드';
       const sheet = getMainSheetByName(newSheetName);
       if (sheet) {
-
+        sheet.getDataRange().clearDataValidations();
         clearOverCutCount(sheet, startRangeName);
         
         initNumberingData(sheet , startRangeName);
@@ -79,7 +79,28 @@ function fillCheckBox(spreadSheet : Spreadsheet, startRangeName : string, column
   const dataStartRange = spreadSheet.getRangeByName(startRangeName);
   const rowCount = getLastDataRowInRange(dataStartRange) - dataStartRange.getRow() + 1
   const checkBoxRange = dataStartRange.offset(0, column, rowCount, 1)
-  checkBoxRange.insertCheckboxes();
+  
+  try {
+    // 유효성 검사 규칙 삭제
+    checkBoxRange.clearDataValidations();
+    
+    // 체크박스 삽입
+    checkBoxRange.insertCheckboxes();
+  } catch (e) {
+    console.log("Error occurred: " + e.message);
+    
+    // 오류가 발생한 경우 해당 셀의 값을 삭제
+    checkBoxRange.getValues().forEach((row, rowIndex) => {
+      row.forEach((cell, colIndex) => {
+        const cellRange = checkBoxRange.getCell(rowIndex + 1, colIndex + 1);
+        try {
+          cellRange.insertCheckboxes();
+        } catch (err) {
+          cellRange.setValue(''); // 값 삭제
+        }
+      });
+    });
+  }
 }
 
 function fillTemplateData(sheet: Sheet, startRangeName: string): void {
@@ -97,7 +118,6 @@ function fillTemplateData(sheet: Sheet, startRangeName: string): void {
 
   targetValues.forEach((row,i) => {
     valIndices.forEach(colIndex => {
-      console.log(values[colIndex])
       if (!row[colIndex]) {
         row[colIndex] = values[colIndex];
       }
