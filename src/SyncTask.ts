@@ -129,3 +129,19 @@ function getWorkerTaskData(worker: string): any[][] {
   })
   return records;
 }
+
+function reportCheck(sheet : Sheet, editedRange : Range){
+  const sheetName = sheet.getName();
+  const startRange = SpreadsheetApp.getActiveSpreadsheet().getRangeByName(sheetName+'!작업자데이터시작');
+    let targetRange = getDataRange(startRange)
+    targetRange = targetRange.offset(0, FieldOffset.PROGRESS_STATE, targetRange.getNumRows(), 1);
+    const checkboxColumnIndex = 12; 
+    
+    // 변경된 셀이 targetRange 내에 있는지 확인
+    if (RangeIntersect_(editedRange, targetRange)) {
+      // 변경된 셀의 행 번호를 가져옴
+      const row = editedRange.getRow();
+      // 체크박스 열의 셀을 가져와서 TRUE로 설정
+      sheet.getRange(row, checkboxColumnIndex).setValue(true);
+    }
+}
