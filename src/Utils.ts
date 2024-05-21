@@ -8,7 +8,7 @@ function getSheetByName(name: string) : Sheet {
 }
 
 function getRangeByName(name: string) : Range {
-  const ss = getSpreadsheet();
+  const ss = getMainSpreadsheet();
   const range = ss.getRangeByName(name);
   if (!range) {
     throw new Error(`${name} 이름 범위를 찾을 수 없습니다.`);
@@ -298,7 +298,7 @@ function getManifestFile(projectId: string): any {
 }
 
 function getPartSheets() : Sheet[]{
-  const ss = getSpreadsheet();
+  const ss = getMainSpreadsheet();
   const result = []
   ss.getSheets().forEach(sheet => {
     const sheetName = sheet.getName();
@@ -332,7 +332,7 @@ function setActiveSpreadsheetId() {
   scriptProperties.setProperty('SPREADSHEET_ID', spreadsheetId);
 }
 
-function getSpreadsheet() : Spreadsheet{
+function getMainSpreadsheet() : Spreadsheet{
   const scriptProperties = PropertiesService.getScriptProperties();
   const spreadsheetId = scriptProperties.getProperty('SPREADSHEET_ID');
   if (!spreadsheetId) {

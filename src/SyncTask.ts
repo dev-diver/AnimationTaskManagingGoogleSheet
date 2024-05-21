@@ -60,7 +60,7 @@ function syncAndReportWorkerTask(record : any[]){
     return;
   }
 
-  const manageSpreadsheet = getSpreadsheet()
+  const manageSpreadsheet = getMainSpreadsheet()
   const partSheet = getSheetByName(part + " 파트")
   if(!partSheet){
     throw new Error("파트 시트가 없습니다.")
@@ -76,7 +76,7 @@ function syncAndReportWorkerTask(record : any[]){
 }
 
 function reportWorkerTask(record : any[]){
-  const manageSpreadsheet = getSpreadsheet()
+  const manageSpreadsheet = getMainSpreadsheet()
   const reportSheet = getSheetByName("로그")
   const numFieldName = '로그'+FieldName.NUMBER+'필드'
   const insertRow = reportSheet.getLastRow() + 1
