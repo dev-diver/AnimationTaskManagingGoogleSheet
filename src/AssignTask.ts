@@ -1,7 +1,7 @@
 function assignAllPartTask() : void {
   
-  deleteNotWorkerSheets()
-  makeWorkerSheets()
+  // deleteNotWorkerSheets()
+  // makeWorkerSheets()
   
   cleanWorkerSheets()
   assignWorkersTask()

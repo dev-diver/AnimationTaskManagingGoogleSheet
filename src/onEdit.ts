@@ -9,7 +9,7 @@ function onEditDo(e: GoogleAppsScript.Events.SheetsOnEdit): void {
     let targetRange = getDataRange(startRange)
     const reportColumn = targetRange.getColumn() + FieldOffset.REPORT
     const alarmColumn = targetRange.getColumn() + FieldOffset.ALARM
-    targetRange = targetRange.offset(0, FieldOffset.START_DATE, targetRange.getNumRows(), targetRange.getNumColumns()-FieldOffset.START_DATE-1);
+    targetRange = targetRange.offset(0, FieldOffset.START_DATE, targetRange.getNumRows(), targetRange.getNumColumns()-FieldOffset.START_DATE-2);
     
     // 변경된 셀이 targetRange 내에 있는지 확인
     if (RangeIntersect_(editedRange, targetRange)) {
