@@ -1,16 +1,28 @@
 
-function syncPartDataToWorker() : void {
-  const activeSheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet()
-  const startRange = getRangeByName(activeSheet.getName()+'!파트데이터시작');
-  const syncData = getSyncData(startRange, (row : any[])=>{
-    if(row[FieldOffset.REPORT] === true){
-      row[FieldOffset.REPORT] = false
-    }
-    return row
-  })
-  syncData.forEach(data => {
-    assignTask(data,true)
-  })
+function syncPartDataToWorker(){
+  showLoadingScreen_("Loading")
+  const ss = SpreadsheetApp.getActiveSpreadsheet()
+  const updateMessage = ss.toast
+  _syncPartDataToWorker(updateMessage)
+}
+
+function _syncPartDataToWorker(updateMessage) : void {
+  try{
+    const activeSheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet()
+    const startRange = getRangeByName(activeSheet.getName()+'!파트데이터시작');
+    const syncData = getSyncData(startRange, (row : any[])=>{
+      if(row[FieldOffset.REPORT] === true){
+        row[FieldOffset.REPORT] = false
+      }
+      return row
+    })
+    syncData.forEach(data => {
+      assignTask(data,true)
+    })
+  }finally{
+
+    hideLoadingScreen_()
+  }
 }
 
 function syncWorkerToPart() : void {

@@ -1,11 +1,23 @@
-function applyPart() : void {
-  setActiveSpreadsheetId();
+function applyPart(){
+  showLoadingScreen_("Loading")
+  const ss = SpreadsheetApp.getActiveSpreadsheet()
+  const updateMessage = ss.toast
+  _applyPart(updateMessage)
+}
 
-  createPartSheets();
-  additionalPartSheetTasks();
+function _applyPart(updateMessage) : void {
+  try{
+    setActiveSpreadsheetId();
+    updateMessage("파트 생성중")
+    createPartSheets();
+    updateMessage("파트 꾸미는 중")
+    additionalPartSheetTasks();
 
-  // deleteNotWorkerSheets()
-  // makeWorkerSheets();
+    // deleteNotWorkerSheets()
+    // makeWorkerSheets();
+  }finally{
+    hideLoadingScreen_()
+  }
 }
 
 function getPartValues(){
@@ -27,6 +39,7 @@ function createPartSheets() : void {
   //파트 만들기
   partSheetNames.forEach(sheetName => {
     if (sheetName) {
+      // updateLoadingMessage(sheetName + " 만드는 중")
       let sheet = ss.getSheetByName(sheetName);
       if (!sheet) {
         sheet = templateSheet.copyTo(ss).setName(sheetName);
@@ -35,6 +48,7 @@ function createPartSheets() : void {
   });
 
   // 파트에 없는 파트 시트 삭제
+  // updateLoadingMessage("파트에 없는 시트 삭제중")
   ss.getSheets().forEach(sheet => {
     const sheetName = sheet.getName();
     if (sheetName.endsWith(' 파트') && !partSheetNames.includes(sheetName)) {
@@ -49,6 +63,7 @@ function additionalPartSheetTasks() : void {
 
   values.forEach((part,i) => {
     if (part) {
+      // updateLoadingMessage(part + " 꾸미는 중")
       const newSheetName = part.trim() + ' 파트';
       const startRangeName = newSheetName + '!' + FieldName.NUMBER + '필드';
       const sheet = getMainSheetByName(newSheetName);

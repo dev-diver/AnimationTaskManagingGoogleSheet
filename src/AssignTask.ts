@@ -1,26 +1,38 @@
-function assignAllPartTask() : void {
-  // deleteNotWorkerSheets()
-  // makeWorkerSheets()
+function assignAllPartTask(){
+  showLoadingScreen_("Loading")
   const ss = SpreadsheetApp.getActiveSpreadsheet()
-  const activeRange = ss.getActiveRange()
-  if(activeRange.getColumn()!=2 || activeRange.getNumColumns()!=1){
-    ss.toast("작업자 이름을 선택하고 실행해주세요")
-    return
-  }
-  const names = activeRange.getValues().map((row) : string =>row[0])
-  console.log(names)
+  const updateMessage = ss.toast
+  _assignAllPartTask(updateMessage)
+}
 
-  if(!getWorkerSpreadSheetId(names[0])){
-    setSheetIdToWorkers()
+function _assignAllPartTask(messageUpdate) : void {
+  try{
+    // deleteNotWorkerSheets()
+    // makeWorkerSheets()
+    const ss = SpreadsheetApp.getActiveSpreadsheet()
+    const activeRange = ss.getActiveRange()
+    if(activeRange.getColumn()!=2 || activeRange.getNumColumns()!=1){
+      throw Error("작업자 이름을 선택하고 실행해주세요")
+    }
+    const names = activeRange.getValues().map((row) : string =>row[0])
+    console.log(names)
+
+    if(!getWorkerSpreadSheetId(names[0])){
+      setSheetIdToWorkers()
+    }
+    
+    names.forEach(name=>{
+      messageUpdate(name+"배치중")
+      const spreadSheetId = getWorkerSpreadSheetId(name)
+      const spreadSheet = SpreadsheetApp.openById(spreadSheetId)
+      cleanWorkerSheet(spreadSheet)
+      assignWorkersTask(name, spreadSheet)
+    })
+  }catch (e){
+    messageUpdate(e)
+  }finally{
+    hideLoadingScreen_()
   }
-  
-  names.forEach(name=>{
-    const spreadSheetId = getWorkerSpreadSheetId(name)
-    console.log(name, spreadSheetId)
-    const spreadSheet = SpreadsheetApp.openById(spreadSheetId)
-    cleanWorkerSheet(spreadSheet)
-    assignWorkersTask(name, spreadSheet)
-  })
 }
 
 
