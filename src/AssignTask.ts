@@ -1,13 +1,62 @@
 function assignAllPartTask() : void {
-  
   // deleteNotWorkerSheets()
   // makeWorkerSheets()
+  const ss = SpreadsheetApp.getActiveSpreadsheet()
+  const activeRange = ss.getActiveRange()
+  if(activeRange.getColumn()!=2 || activeRange.getNumColumns()!=1){
+    ss.toast("작업자 이름을 선택하고 실행해주세요")
+    return
+  }
+  const names = activeRange.getValues().map((row) : string =>row[0])
+  console.log(names)
+
+  if(!getWorkerSpreadSheetId(names[0])){
+    setSheetIdToWorkers()
+  }
   
-  cleanWorkerSheets()
-  assignWorkersTask()
+  names.forEach(name=>{
+    const spreadSheetId = getWorkerSpreadSheetId(name)
+    console.log(name, spreadSheetId)
+    const spreadSheet = SpreadsheetApp.openById(spreadSheetId)
+    cleanWorkerSheet(spreadSheet)
+    assignWorkersTask(name, spreadSheet)
+  })
 }
 
-function applyWorkerSheetFormat(spreadsheet : Spreadsheet){
+
+function setSheetIdToWorkers() : void {
+  const files = getWorkerSpreadSheets()
+  files.forEach(file=>{
+    const name = file.getName().split(' ')[0]
+    console.log("찾은 이름", name)
+    const workerRange = findRangeByWorkerName(name)
+    workerRange.offset(0,1).setValue(file.getId())  
+  })
+}
+
+function findRangeByWorkerName(workerName : string) : Range {
+  
+  const ss = SpreadsheetApp.getActiveSpreadsheet()
+  const data = getWorkerNames()
+  
+  const index = data.indexOf(workerName)
+  if(index==-1){
+    throw Error("작업자 이름을 찾을 수 없습니다.")
+  }
+
+  const startRange = ss.getRangeByName('작업자')
+  const row = startRange.getRow() + 1 + index
+  const column = startRange.getColumn()
+  return startRange.getSheet().getRange(row, column)
+}
+
+function getWorkerSpreadSheetId(workerName : string) : string {
+  const workerRange = findRangeByWorkerName(workerName)
+  return workerRange.offset(0,1).getValue()
+}
+
+
+function applyWorkerSheetFormat(spreadsheet: Spreadsheet){
   fillCheckBox(spreadsheet, '작업자데이터시작', FieldOffset.REPORT);
   fillCheckBox(spreadsheet, '작업자데이터시작', FieldOffset.ALARM);
   // copyColumnFormats(spreadsheet, spreadsheet,'작업자데이터시작', '작업자데이터시작');
@@ -26,17 +75,12 @@ function applyWorkerSheetFormat(spreadsheet : Spreadsheet){
   }
 }
 
-function assignWorkersTask() : void {
-  const files = getWorkerSpreadSheets()
-  files.forEach(file=>{
-    const spreadsheet = SpreadsheetApp.openById(file.getId());
-    assignWorkerTask(spreadsheet)
-    applyWorkerSheetFormat(spreadsheet)
-  })
+function assignWorkersTask(workerName: string, workerSpreadSheet : Spreadsheet) : void {
+    assignWorkerTask(workerName, workerSpreadSheet)
+    applyWorkerSheetFormat(workerSpreadSheet)
 }
 
-function assignWorkerTask(workerSpreadSheet : Spreadsheet) : void {
-  const workerName = workerSpreadSheet.getName().split(' ')[0]
+function assignWorkerTask(workerName: string, workerSpreadSheet: Spreadsheet) : void {
   const workerTaskData = getWorkerTaskData(workerName)
 
   const targetRange = workerSpreadSheet.getRangeByName('작업자데이터시작');
@@ -45,15 +89,14 @@ function assignWorkerTask(workerSpreadSheet : Spreadsheet) : void {
   }
 }
 
-function cleanWorkerSheets() : void {
-  const files = getWorkerSpreadSheets()
+function cleanWorkerSheets(files : File[]) : void {
   files.forEach(file=>{
-    const workerSpreadsheet = SpreadsheetApp.openById(file.getId())
-    cleanWorkerSheet(workerSpreadsheet)
+    const spreadSheet = SpreadsheetApp.openById(file.getId())
+    cleanWorkerSheet(spreadSheet)
   })
 }
 
-function cleanWorkerSheet(spreadSheet :Spreadsheet): void {
+function cleanWorkerSheet(spreadSheet : Spreadsheet): void {
   const workerSheet = spreadSheet.getSheetByName('작업');
   if (!workerSheet) {
     console.error(`작업 시트를 찾을 수 없습니다: ${spreadSheet.getName()}`);

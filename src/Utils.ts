@@ -344,6 +344,13 @@ function getWorkerSpreadSheets() : File[]{
   return result
 }
 
+function getWorkerNames() : string[]{
+  const ss = SpreadsheetApp.getActiveSpreadsheet()
+  const startRange = ss.getRangeByName('작업자')
+  const data = getColumnValues(startRange.getSheet(), startRange.getRow()+1, startRange.getColumn())
+  return data
+}
+
 function isWorkerSpreadSheet(file : File) : boolean{
   return file.getName().endsWith(' 작업');
 }

@@ -4,8 +4,8 @@ function applyPart() : void {
   createPartSheets();
   additionalPartSheetTasks();
 
-  deleteNotWorkerSheets()
-  makeWorkerSheets();
+  // deleteNotWorkerSheets()
+  // makeWorkerSheets();
 }
 
 function getPartValues(){
