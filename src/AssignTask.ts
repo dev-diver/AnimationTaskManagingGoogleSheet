@@ -6,7 +6,12 @@ function assignAllPartTask(){
 function getSelectedNames() : string[] {
   const ss = SpreadsheetApp.getActiveSpreadsheet()
   const activeRange = ss.getActiveRange()
-  if(activeRange.getColumn()!=2 || activeRange.getNumColumns()!=1){
+  const workerStartRange = ss.getRangeByName('작업자')
+  if(
+    activeRange.getValue() == "" ||
+    activeRange.getRow() <= workerStartRange.getRow() ||
+    activeRange.getColumn()!=workerStartRange.getColumn() || 
+    activeRange.getNumColumns()>1){
     throw Error("작업자 이름을 선택하고 실행해주세요")
   }
   const names = activeRange.getValues().map((row) : string =>row[0])
