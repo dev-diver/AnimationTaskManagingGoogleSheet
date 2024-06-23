@@ -1,9 +1,7 @@
 
 function syncPartDataToWorker(){
   showLoadingScreen_("Loading")
-  const ss = SpreadsheetApp.getActiveSpreadsheet()
-  const updateMessage = ss.toast
-  _syncPartDataToWorker(updateMessage)
+  _syncPartDataToWorker(showLoadingScreen_)
 }
 
 function _syncPartDataToWorker(updateMessage) : void {

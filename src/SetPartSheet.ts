@@ -1,8 +1,6 @@
 function applyPart(){
   showLoadingScreen_("Loading")
-  const ss = SpreadsheetApp.getActiveSpreadsheet()
-  const updateMessage = ss.toast
-  _applyPart(updateMessage)
+  _applyPart(showLoadingScreen_)
 }
 
 function _applyPart(updateMessage) : void {

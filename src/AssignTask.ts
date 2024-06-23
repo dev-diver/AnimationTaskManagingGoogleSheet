@@ -1,8 +1,6 @@
 function assignAllPartTask(){
   showLoadingScreen_("Loading")
-  const ss = SpreadsheetApp.getActiveSpreadsheet()
-  const updateMessage = ss.toast
-  _assignAllPartTask(updateMessage)
+  _assignAllPartTask(showLoadingScreen_)
 }
 
 function _assignAllPartTask(messageUpdate) : void {
@@ -25,6 +23,7 @@ function _assignAllPartTask(messageUpdate) : void {
       messageUpdate(name+"배치중")
       const spreadSheetId = getWorkerSpreadSheetId(name)
       const spreadSheet = SpreadsheetApp.openById(spreadSheetId)
+      // Utilities.sleep(2000);
       cleanWorkerSheet(spreadSheet)
       assignWorkersTask(name, spreadSheet)
     })
