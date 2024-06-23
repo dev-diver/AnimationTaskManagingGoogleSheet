@@ -1,12 +1,10 @@
 function getShareDriveFolderId(){
-  const scriptProperties = PropertiesService.getScriptProperties();
-  const driveId = scriptProperties.getProperty('DRIVE_ID');
-  return driveId;
+  let folderId = getRangeByName('폴더ID').offset(0,1).getValue()
+  return folderId;
 }
 
 function getMainSheetByName(name: string) : Sheet {
-  const scriptProperties = PropertiesService.getScriptProperties();
-  const spreadsheetId = scriptProperties.getProperty('SPREADSHEET_ID');
+  const spreadsheetId = getMainSpreadsheetId();
   let ss = SpreadsheetApp.getActiveSpreadsheet();
   if(ss.getId()!=spreadsheetId){
     ss = SpreadsheetApp.openById(spreadsheetId);
@@ -355,17 +353,48 @@ function isWorkerSpreadSheet(file : File) : boolean{
   return file.getName().endsWith(' 작업');
 }
 
-function setActiveSpreadsheetId() {
-  const spreadsheetId = SpreadsheetApp.getActiveSpreadsheet().getId();
-  const scriptProperties = PropertiesService.getScriptProperties();
-  scriptProperties.setProperty('SPREADSHEET_ID', spreadsheetId);
+function getActiveSpreadsheetId() : string {
+  return SpreadsheetApp.getActiveSpreadsheet().getId();
+}
+
+function setMainSpreadsheetId(spreadsheet : Spreadsheet, mainSpreadsheetId : string) {
+  let settingsSheet = spreadsheet.getSheetByName('설정');
+  if (!settingsSheet) {
+    settingsSheet = spreadsheet.insertSheet('설정');
+  }
+  let cell = spreadsheet.getRangeByName('메인시트ID');
+  if(!cell){
+    cell = settingsSheet.getRange('A1');
+    spreadsheet.setNamedRange('메인시트ID', cell);
+  }
+  cell.offset(0,1).setValue(mainSpreadsheetId);
+}
+
+function getMainSpreadsheetId() : string {
+  try{
+    const activeSheet = SpreadsheetApp.getActiveSpreadsheet();
+    const spreadSheetId = activeSheet.getRangeByName('메인시트ID').offset(0,1).getValue();
+    if(!spreadSheetId){
+      throw new Error('Spreadsheet ID 설정이 안돼 있습니다.');
+    } 
+    return spreadSheetId;
+  }catch(e){
+    throw new Error(e);
+  }
 }
 
 function getMainSpreadsheet() : Spreadsheet{
-  const scriptProperties = PropertiesService.getScriptProperties();
-  const spreadsheetId = scriptProperties.getProperty('SPREADSHEET_ID');
-  if (!spreadsheetId) {
-    throw new Error('Spreadsheet ID not set in script properties.');
-  }
-  return SpreadsheetApp.openById(spreadsheetId);
+  return SpreadsheetApp.openById(getMainSpreadsheetId());
+}
+
+function getWorkerTemplateSheetId() : string {
+  const activeSheet = SpreadsheetApp.getActiveSpreadsheet();
+  const cell = activeSheet.getRangeByName('템플릿시트ID');
+  return cell.offset(0,1).getValue();
+}
+
+function setWorkeTemplateSheetId(templateSheetId : string) : void {
+  const activeSheet = SpreadsheetApp.getActiveSpreadsheet();
+  const cell = activeSheet.getRangeByName('템플릿시트ID');
+  cell.offset(0,1).setValue(templateSheetId);
 }

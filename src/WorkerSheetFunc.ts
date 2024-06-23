@@ -8,4 +8,3 @@ function onClickBtn() {
 function onEdit(e: GoogleAppsScript.Events.SheetsOnEdit) {
   this[LIBRARY_NAME].onEditDo(e)
 }
-

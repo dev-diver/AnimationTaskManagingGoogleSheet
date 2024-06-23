@@ -5,14 +5,15 @@ function applyPart(){
 
 function _applyPart(updateMessage) : void {
   try{
-    setActiveSpreadsheetId();
+    const activeSpreadsheet = SpreadsheetApp.getActiveSpreadsheet()
+    setMainSpreadsheetId(activeSpreadsheet, activeSpreadsheet.getId());
+
     updateMessage("파트 생성중")
     createPartSheets();
     updateMessage("파트 꾸미는 중")
     additionalPartSheetTasks();
 
     // deleteNotWorkerSheets()
-    // makeWorkerSheets();
   }finally{
     hideLoadingScreen_()
   }

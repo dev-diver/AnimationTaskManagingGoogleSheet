@@ -3,16 +3,20 @@ function assignAllPartTask(){
   _assignAllPartTask(showLoadingScreen_)
 }
 
+function getSelectedNames() : string[] {
+  const ss = SpreadsheetApp.getActiveSpreadsheet()
+  const activeRange = ss.getActiveRange()
+  if(activeRange.getColumn()!=2 || activeRange.getNumColumns()!=1){
+    throw Error("작업자 이름을 선택하고 실행해주세요")
+  }
+  const names = activeRange.getValues().map((row) : string =>row[0])
+  return names
+}
+
 function _assignAllPartTask(messageUpdate) : void {
   try{
     // deleteNotWorkerSheets()
-    // makeWorkerSheets()
-    const ss = SpreadsheetApp.getActiveSpreadsheet()
-    const activeRange = ss.getActiveRange()
-    if(activeRange.getColumn()!=2 || activeRange.getNumColumns()!=1){
-      throw Error("작업자 이름을 선택하고 실행해주세요")
-    }
-    const names = activeRange.getValues().map((row) : string =>row[0])
+    let names = getSelectedNames()
     console.log(names)
 
     if(!getWorkerSpreadSheetId(names[0])){
