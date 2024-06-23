@@ -12,8 +12,8 @@ function _applyPart(updateMessage) : void {
     createPartSheets();
     updateMessage("파트 꾸미는 중")
     additionalPartSheetTasks();
-
-    // deleteNotWorkerSheets()
+  }catch(e){
+    updateMessage(e)
   }finally{
     hideLoadingScreen_()
   }

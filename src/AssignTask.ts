@@ -18,7 +18,7 @@ function getSelectedNames() : string[] {
   return names
 }
 
-function _assignAllPartTask(messageUpdate) : void {
+function _assignAllPartTask(updateMessage) : void {
   try{
     // deleteNotWorkerSheets()
     let names = getSelectedNames()
@@ -29,7 +29,7 @@ function _assignAllPartTask(messageUpdate) : void {
     }
     
     names.forEach(name=>{
-      messageUpdate(name+"배치중")
+      updateMessage(name+"배치중")
       const spreadSheetId = getWorkerSpreadSheetId(name)
       const spreadSheet = SpreadsheetApp.openById(spreadSheetId)
       // Utilities.sleep(2000);
@@ -37,7 +37,7 @@ function _assignAllPartTask(messageUpdate) : void {
       assignWorkersTask(name, spreadSheet)
     })
   }catch (e){
-    messageUpdate(e)
+    updateMessage(e)
   }finally{
     hideLoadingScreen_()
   }

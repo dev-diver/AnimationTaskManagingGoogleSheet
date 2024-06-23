@@ -4,17 +4,23 @@ function makeWorkerSheets(){
 }
 
 function _makeWorkerSheets(updateMessage) : void {
-  updateMessage("템플릿 파일 생성중")
-  let templateFile = checkAndCreateWorkerTemplateSheet()
+  try{
+    updateMessage("템플릿 파일 생성중")
+    let templateFile = checkAndCreateWorkerTemplateSheet()
 
-  let names : string[] = getSelectedNames()
-  names.forEach(name => {
-    if (name) {
-      updateMessage(`${name} 시트 생성중`)
-      const spreadSheetName = name.trim() + " 작업";
-      copyWorkerSheet(templateFile, spreadSheetName)
-    }
-  });
+    let names : string[] = getSelectedNames()
+    names.forEach(name => {
+      if (name) {
+        updateMessage(`${name} 시트 생성중`)
+        const spreadSheetName = name.trim() + " 작업";
+        copyWorkerSheet(templateFile, spreadSheetName)
+      }
+    });
+  }catch (e){
+    updateMessage(e)
+  }finally{
+    hideLoadingScreen_()
+  }
 }
 
 function checkAndCreateWorkerTemplateSheet() : File {

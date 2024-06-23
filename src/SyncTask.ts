@@ -17,8 +17,9 @@ function _syncPartDataToWorker(updateMessage) : void {
     syncData.forEach(data => {
       assignTask(data,true)
     })
+  }catch(e){
+    updateMessage(e)
   }finally{
-
     hideLoadingScreen_()
   }
 }
