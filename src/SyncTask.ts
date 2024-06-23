@@ -18,7 +18,7 @@ function _syncPartDataToWorker(updateMessage) : void {
       assignTask(data,true)
     })
   }catch(e){
-    updateMessage(e)
+    throw Error(e.message)
   }finally{
     hideLoadingScreen_()
   }

@@ -13,7 +13,7 @@ function _applyPart(updateMessage) : void {
     updateMessage("파트 꾸미는 중")
     additionalPartSheetTasks();
   }catch(e){
-    updateMessage(e)
+    throw Error(e.message)
   }finally{
     hideLoadingScreen_()
   }

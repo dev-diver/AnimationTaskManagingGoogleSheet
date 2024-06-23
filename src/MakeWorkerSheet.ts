@@ -17,7 +17,7 @@ function _makeWorkerSheets(updateMessage) : void {
       }
     });
   }catch (e){
-    updateMessage(e)
+    throw Error(e.message)
   }finally{
     hideLoadingScreen_()
   }

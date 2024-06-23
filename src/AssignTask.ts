@@ -37,7 +37,7 @@ function _assignAllPartTask(updateMessage) : void {
       assignWorkersTask(name, spreadSheet)
     })
   }catch (e){
-    updateMessage(e)
+    throw Error(e.message)
   }finally{
     hideLoadingScreen_()
   }
