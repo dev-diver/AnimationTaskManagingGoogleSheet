@@ -7,13 +7,14 @@ function _makeWorkerSheets(updateMessage) : void {
   try{
     updateMessage("템플릿 파일 생성중")
     let templateFile = checkAndCreateWorkerTemplateSheet()
-
+    const workerStartRange = getRangeByName('작업자')
     let names : string[] = getSelectedNames()
-    names.forEach(name => {
+    names.forEach((name,i) => {
       if (name) {
         updateMessage(`${name} 시트 생성중`)
         const spreadSheetName = name.trim() + " 작업";
-        copyWorkerSheet(templateFile, spreadSheetName)
+        const newSpreadSheetId = copyWorkerSheet(templateFile, spreadSheetName)
+        workerStartRange.offset(i+2,1).setValue(newSpreadSheetId)
       }
     });
   }catch (e){
@@ -58,10 +59,10 @@ function makeTemplateSheet() : File {
   }
 }
 
-function copyWorkerSheet(templateFile: File, name : string) : void {
+function copyWorkerSheet(templateFile: File, name : string) : string {
   var newFile = templateFile.makeCopy(name);
-
-  // var newSpreadsheetId = newFile.getId();
+  var newSpreadsheetId = newFile.getId();
+  return newSpreadsheetId;
   // var newSpreadsheet = SpreadsheetApp.openById(newSpreadsheetId);
   // const newScriptId = createNewScriptProject(newSpreadsheet.getId());
   // const fileName = 'WorkerSheetFunc'; // 복사할 파일 이름

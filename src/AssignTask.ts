@@ -150,13 +150,13 @@ function assignTask(record : any[], overwrite : boolean = false) : void {
   if(!worker){
     return
   }
-  const file = getWorkerSpreadSheets().find(spreadSheet => spreadSheet.getName().includes(worker))
+  const workerSpreadSheetId = getWorkerSpreadSheetId(worker)
 
-  if(file){
-    const workerSpreadsheet = SpreadsheetApp.openById(file.getId())
+  if(workerSpreadSheetId!==""){
+    const workerSpreadsheet = SpreadsheetApp.openById(workerSpreadSheetId)
     const workerSheet = workerSpreadsheet.getSheetByName('작업');
     if (!workerSheet) {
-      console.error(`작업 시트를 찾을 수 없습니다: ${file.getName()}`);
+      console.error(`작업 시트를 찾을 수 없습니다: ${workerSpreadsheet.getName()}`);
       return;
     }
 
@@ -178,5 +178,7 @@ function assignTask(record : any[], overwrite : boolean = false) : void {
     const insertRow = dataStartRow + findInsertPositionIn(workerCutValues, cutValue);
 
     insertRecord(record, workerSpreadsheet, workerSheet, numFieldName, insertRow);
+  }else{
+    throw Error("작업자 파일을 찾을 수 없습니다.")
   }
 }
