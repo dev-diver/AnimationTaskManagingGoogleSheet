@@ -7,14 +7,16 @@ function _makeWorkerSheets(updateMessage) : void {
   try{
     updateMessage("템플릿 파일 생성중")
     let templateFile = checkAndCreateWorkerTemplateSheet()
-    const workerStartRange = getRangeByName('작업자')
     let names : string[] = getSelectedNames()
+    const activeRange = SpreadsheetApp.getActiveSpreadsheet().getActiveRange()
+    const startRow = activeRange.getRow()
+    const startColumn = activeRange.getColumn()
     names.forEach((name,i) => {
       if (name) {
         updateMessage(`${name} 시트 생성중`)
         const spreadSheetName = name.trim() + " 작업";
         const newSpreadSheetId = copyWorkerSheet(templateFile, spreadSheetName)
-        workerStartRange.offset(i+2,1).setValue(newSpreadSheetId)
+        activeRange.getSheet().getRange(startRow + i, startColumn + 1).setValue(newSpreadSheetId)
       }
     });
   }catch (e){
