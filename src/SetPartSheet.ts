@@ -11,7 +11,7 @@ function _applyPart(updateMessage) : void {
     updateMessage("파트 생성중")
     createPartSheets();
     updateMessage("파트 꾸미는 중")
-    additionalPartSheetTasks();
+    additionalPartSheetTasks(updateMessage);
   }catch(e){
     throw Error(e.message)
   }finally{
@@ -36,9 +36,9 @@ function createPartSheets() : void {
   const partSheetNames = values.map(part => part.trim() + ' 파트')
 
   //파트 만들기
-  partSheetNames.forEach(sheetName => {
+  partSheetNames.forEach((sheetName,i) => {
     if (sheetName) {
-      // updateLoadingMessage(sheetName + " 만드는 중")
+      // updateMessage(sheetName + " 만드는 중" + ".".repeat(i%3+1))
       let sheet = ss.getSheetByName(sheetName);
       if (!sheet) {
         sheet = templateSheet.copyTo(ss).setName(sheetName);
@@ -56,13 +56,13 @@ function createPartSheets() : void {
   })
 }
 
-function additionalPartSheetTasks() : void {
+function additionalPartSheetTasks(updateMessage) : void {
   const values = getPartValues()
   const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
 
   values.forEach((part,i) => {
     if (part) {
-      // updateLoadingMessage(part + " 꾸미는 중")
+      updateMessage(part + "파트 꾸미는 중"+".".repeat(i%3+1))
       const newSheetName = part.trim() + ' 파트';
       const startRangeName = newSheetName + '!' + FieldName.NUMBER + '필드';
       const sheet = getMainSheetByName(newSheetName);
