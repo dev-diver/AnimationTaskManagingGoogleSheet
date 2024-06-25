@@ -357,6 +357,11 @@ function getActiveSpreadsheetId() : string {
   return SpreadsheetApp.getActiveSpreadsheet().getId();
 }
 
+function setMainSpreadsheetIdOnMainSheet() {
+  const spreadSheetId = SpreadsheetApp.getActiveSpreadsheet().getId();
+  setMainSpreadsheetId(SpreadsheetApp.getActiveSpreadsheet(), spreadSheetId);
+}
+
 function setMainSpreadsheetId(spreadsheet : Spreadsheet, mainSpreadsheetId : string) {
   let settingsSheet = spreadsheet.getSheetByName('설정');
   if (!settingsSheet) {
@@ -393,7 +398,7 @@ function getWorkerTemplateSheetId() : string {
   return cell.offset(0,1).getValue();
 }
 
-function setWorkeTemplateSheetId(templateSheetId : string) : void {
+function setWorkerTemplateSheetId(templateSheetId : string) : void {
   const activeSheet = SpreadsheetApp.getActiveSpreadsheet();
   const cell = activeSheet.getRangeByName('템플릿시트ID');
   cell.offset(0,1).setValue(templateSheetId);

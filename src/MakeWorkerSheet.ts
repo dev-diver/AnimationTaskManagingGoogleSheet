@@ -4,6 +4,7 @@ function makeWorkerSheets(){
 }
 
 function _makeWorkerSheets(updateMessage) : void {
+  setMainSpreadsheetIdOnMainSheet()
   try{
     updateMessage("템플릿 파일 생성중")
     let templateFile = checkAndCreateWorkerTemplateSheet()
@@ -13,10 +14,13 @@ function _makeWorkerSheets(updateMessage) : void {
     const startColumn = activeRange.getColumn()
     names.forEach((name,i) => {
       if (name) {
+        const idRange = activeRange.getSheet().getRange(startRow + i, startColumn + 1)
         updateMessage(`${name} 시트 생성중`)
         const spreadSheetName = name.trim() + " 작업";
-        const newSpreadSheetId = copyWorkerSheet(templateFile, spreadSheetName)
-        activeRange.getSheet().getRange(startRow + i, startColumn + 1).setValue(newSpreadSheetId)
+        if(idRange.getValue()==""){
+          const newSpreadSheetId = copyWorkerSheet(templateFile, spreadSheetName)
+          idRange.setValue(newSpreadSheetId)
+        }
       }
     });
   }catch (e){
@@ -33,7 +37,9 @@ function checkAndCreateWorkerTemplateSheet() : File {
   if(!files.hasNext()){
     return makeTemplateSheet()
   }else{
-    return files.next()
+    let template = files.next()
+    setWorkerTemplateSheetId(template.getId());
+    return template
   }
 }
 
@@ -56,7 +62,7 @@ function makeTemplateSheet() : File {
     const fileName = 'WorkerSheetFunc'; // 복사할 파일 이름
     copyLibrarySettingToProject(scriptId, newScriptId, fileName);
 
-    setWorkeTemplateSheetId(newSpreadSheet.getId());
+    setWorkerTemplateSheetId(newSpreadSheet.getId());
     return DriveApp.getFileById(newSpreadSheet.getId());
   }
 }
